@@ -46,7 +46,7 @@ git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygment
 	\mmtinline/theory MyTheory = c : type ❘ # abc ❙❚/
 
 	% Variant 3: Code given externally in file, rendered in display mode
-	\mmtfile{mmt-pygments-lexer.py:MMTLexer -x}{your-mmt-file.mmt}
+	\mmtfile{your-mmt-file.mmt}
 \end{document}
 ```
 
