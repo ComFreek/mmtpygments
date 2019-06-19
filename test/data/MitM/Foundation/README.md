@@ -1,1 +1,1 @@
-File copied from https://gl.mathhub.info/MitM/Foundation
+File copied from <https://gl.mathhub.info/MitM/Foundation>

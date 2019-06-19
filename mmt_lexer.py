@@ -13,7 +13,7 @@
 import re
 
 from pygments.lexer import RegexLexer, bygroups
-from pygments.token import Text, Comment, Keyword, Name, String, \
+from pygments.token import Comment, Keyword, Name, String, \
 	Number, Punctuation, Whitespace
 
 __all__ = ['MMTLexer']
