@@ -35,7 +35,7 @@ git submodule add mmt-pygments-lexer https://github.com/ComFreek/mmt-pygments-le
 theory MyTheory =
 	c : type ❘ # abc ❙
 ❚
-\end{minted}
+	\end{minted}
 \end{document}
 ```
 
