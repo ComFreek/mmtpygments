@@ -36,7 +36,15 @@ def generate_index_file(out_filenames, base_path, index_file):
 if __name__ == "__main__":
 	lexer = MMTLexer()
 
+	if len(sys.argv) != 2:
+		sys.stderr.write("Usage: " + sys.argv[0] + " Base-Path-To-Use-For-Links-In-Generated-HTML-Index-File\n")
+		sys.stderr.write("E.g. https://example.com/")
+
+		sys.exit(1)
+
 	TEST_FILES_DIR = 'data'
+	INDEX_FILE_BASE_PATH = sys.argv[1]
+
 	TEST_FILES = glob.iglob(path.join(TEST_FILES_DIR, "*.mmt"))
 
 	lexer = MMTLexer(encoding = "utf-8")
@@ -62,7 +70,7 @@ if __name__ == "__main__":
 				pygments.format(tokens, html_formatter, out_file)
 
 	with io.open('index.html', mode="w") as index_file:
-		generate_index_file(out_filenames, 'https://', index_file)
+		generate_index_file(out_filenames, INDEX_FILE_BASE_PATH, index_file)
 
 	if at_least_one_erroneous:
 		sys.stderr.write("\nAt least one error occurred, returning with non-zero exit code.\n")

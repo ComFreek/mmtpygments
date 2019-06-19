@@ -13,7 +13,7 @@ install:
 cache: pip
 
 script:
-  - cd test && python test.py
+  - cd test && python test.py https://comfreek.github.io/mmt-pygments-lexer/test/
 
 deploy:
   provider: pages
