@@ -40,3 +40,11 @@ theory MyTheory =
 ```
 
 See the [minted manual](https://ctan.org/pkg/minted) on how to define shortcuts lest you have to type `mmt-pygments-lexer.py:MMTLexer -x` every time.
+
+## Common Errors
+
+### Rendered PDF shows tab characters of source
+
+If you tab characters in the MMT source being highlighted and they are shown in the PDF rendered by XeLaTeX, you face a known bug of XeLaTeX ([\[1\]](https://tex.stackexchange.com/a/36872/38074), [\[2\]](https://tex.stackexchange.com/a/14776/38074)). It can be solved by passing `-8bit` to XeLaTeX.
+
+![image](https://user-images.githubusercontent.com/1827709/59755955-23c81200-9289-11e9-92c5-1659b60d03d1.png)
