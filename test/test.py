@@ -11,20 +11,17 @@
 """
 
 import pygments
-from pygments.formatter import Formatter
 from pygments.formatters.html import HtmlFormatter
 from pygments.token import Token
 
-import sys
-from os import path
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-
-from mmt_lexer import MMTLexer
-
 import glob
 import io
-import sys
 from os import path
+import sys
+
+# Add parent directory such that we can import from mmt_lexer
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+from mmt_lexer import MMTLexer
 
 def generate_index_file(out_filenames, base_path, index_file):
 	# TODO Insecure HTML Injection!
@@ -36,7 +33,6 @@ def generate_index_file(out_filenames, base_path, index_file):
 
 	index_file.write("".join(html_anchors))
 
-# Use this for debugging
 if __name__ == "__main__":
 	lexer = MMTLexer()
 

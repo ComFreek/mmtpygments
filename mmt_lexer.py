@@ -2,7 +2,7 @@
 """
 	Pygments Lexer for MMT Surface Syntax
 	~~~~~~~~~~~~~~~~~~~~
-	
+
 	The MMT project can be found at https://uniformal.github.io/.
 
 	:author: ComFreek <comfreek@outlook.com>
@@ -12,20 +12,16 @@
 
 import re
 
-from pygments.lexer import RegexLexer, include, bygroups, default, using, \
-	this, words, combined
-from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
-	Number, Punctuation, Other, Whitespace
-from pygments.util import get_bool_opt, iteritems
-import pygments.unistring as uni
+from pygments.lexer import RegexLexer, bygroups
+from pygments.token import Text, Comment, Keyword, Name, String, \
+	Number, Punctuation, Whitespace
 
 __all__ = ['MMTLexer']
-
 
 class MMTLexer(RegexLexer):
 	"""
 	Pygments Lexer for MMT Surface Syntax (.mmt)
-	
+
 	The MMT project can be found at https://uniformal.github.io/.
 	"""
 
@@ -50,7 +46,7 @@ class MMTLexer(RegexLexer):
 			(r'\s', Whitespace),
 			# First try matching with meta theory
 			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(=)', bygroups(Name.Variable, Whitespace, Punctuation, Whitespace, Name.Variable, Whitespace, Punctuation), 'moduleBody'),
-			
+
 			# Then without meta theory
 			(r'(\S+)(\s*)(=)', bygroups(Name.Variable, Whitespace, Punctuation), 'moduleBody')
 		],
@@ -70,7 +66,7 @@ class MMTLexer(RegexLexer):
 					Punctuation
 			), 'moduleBody')
 		],
-		
+
 		# Modules subsume both theories and views
 		# Invariant: moduleBody jumps at end two levels up since it assumes a theoryHeader or viewHeader before
 		'moduleBody': [
@@ -84,13 +80,13 @@ class MMTLexer(RegexLexer):
 		],
 		'includeDeclaration': [
 			(r'❙', Punctuation, '#pop'),
-			
+
 			# If not end delimiter, interpret everything else as an expression
 			(r'', Whitespace, 'expression')
 		],
 		'ruleDeclaration': [
 			(r'❙', Punctuation, '#pop'),
-			
+
 			# If not end delimiter, interpret everything else as an expression
 			(r'', Whitespace, 'expression')
 		],
@@ -106,7 +102,7 @@ class MMTLexer(RegexLexer):
 		'notationExpression': [
 			# Lexing rule for notations specifying precedence
 			(r'([^❘❙❚=]+)(\bprec)(\s+)(-?\d+)', bygroups(String, Keyword, Whitespace, Number.Integer), '#pop'),
-			
+
 			# And for notations without
 			# (Theoretically, both could be merged into one regex, however I couldn't figure out bygroups usage in that case.)
 			(r'([^❘❙❚=]+)', bygroups(String), '#pop')

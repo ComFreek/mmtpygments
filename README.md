@@ -1,8 +1,11 @@
+[![Build Status](https://api.travis-ci.com/ComFreek/mmt-pygments-lexer.svg?branch=master)](https://travis-ci.com/ComFreek/mmt-pygments-lexer)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/32b61ca59aba4a79ae4ab5582f210572)](https://app.codacy.com/app/ComFreek/mmt-pygments-lexer?utm_source=github.com&utm_medium=referral&utm_content=ComFreek/mmt-pygments-lexer&utm_campaign=Badge_Grade_Dashboard)
+
 # MMT Pygments Lexer
 
 ![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/59698193-7523c300-91ef-11e9-8c4b-80ec2d3e4a40.png)
 
-# Usage
+## Usage
 
 We don't have a Pip package currently, hence we recommend cloning this repository as a Git submodule:
 
@@ -10,7 +13,7 @@ We don't have a Pip package currently, hence we recommend cloning this repositor
 git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygments-lexer
 ```
 
-## Usage in LaTeX with minted
+### Usage in LaTeX with minted
 
 [minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments lexer. As this is a Pygments lexer, we can let minted use it:
 

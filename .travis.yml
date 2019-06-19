@@ -13,7 +13,7 @@ install:
 cache: pip
 
 script:
-  - cd test && python test.ps
+  - cd test && python test.py
 
 deploy:
   provider: pages
