@@ -43,6 +43,7 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	TEST_FILES_DIR = 'data'
+	INDEX_FILENAME = 'index.html'
 	INDEX_FILE_BASE_PATH = sys.argv[1]
 
 	TEST_FILES = glob.iglob(path.join(TEST_FILES_DIR, "*.mmt"))
@@ -69,8 +70,10 @@ if __name__ == "__main__":
 			with io.open(out_filename, mode="wb") as out_file:
 				pygments.format(tokens, html_formatter, out_file)
 
-	with io.open('index.html', mode="w") as index_file:
+	with io.open(INDEX_FILENAME, mode="w") as index_file:
 		generate_index_file(out_filenames, INDEX_FILE_BASE_PATH, index_file)
+
+	print("Wrote index file to " + INDEX_FILENAME)
 
 	if at_least_one_erroneous:
 		sys.stderr.write("\nAt least one error occurred, returning with non-zero exit code.\n")
