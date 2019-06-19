@@ -7,7 +7,7 @@
 We don't have a Pip package currently, hence we recommend cloning this repository as a Git submodule:
 
 ```bash
-git submodule add mmt-pygments-lexer https://github.com/ComFreek/mmt-pygments-lexer.git
+git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygments-lexer
 ```
 
 ## Usage in LaTeX
