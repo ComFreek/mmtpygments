@@ -29,7 +29,7 @@ git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygment
 }
 
 % "./mmt-pygments-lexer" is this repository cloned on your drive
-\newcommand{\mmtPygmentsLexerCommand}{./mmt-pygments-lexer/mmt-pygments-lexer.py:MMTLexer -x}
+\newcommand{\mmtPygmentsLexerCommand}{./mmt-pygments-lexer/mmt_lexer.py:MMTLexer -x}
 
 \newminted[mmtcode]{\mmtPygmentsLexerCommand}{}
 \newmintinline[mmtinline]{\mmtPygmentsLexerCommand}{}
