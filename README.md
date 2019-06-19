@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.com/ComFreek/mmt-pygments-lexer.svg?branch=master)](https://travis-ci.com/ComFreek/mmt-pygments-lexer)
+[![Build Status](https://travis-ci.org/ComFreek/mmt-pygments-lexer.svg?branch=master)](https://travis-ci.org/ComFreek/mmt-pygments-lexer)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/32b61ca59aba4a79ae4ab5582f210572)](https://app.codacy.com/app/ComFreek/mmt-pygments-lexer?utm_source=github.com&utm_medium=referral&utm_content=ComFreek/mmt-pygments-lexer&utm_campaign=Badge_Grade_Dashboard)
 
 # MMT Pygments Lexer
