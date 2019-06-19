@@ -1,0 +1,25 @@
+branches:
+  only:
+    - master
+    - /^greenkeeper/.*$/
+
+dist: xenial
+language: python
+python:
+  - "3.7"
+
+install:
+  - pip install Pygments
+cache: pip
+
+script:
+  - cd test && python test.ps
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_PAGES_DEPLOYMENT_TOKEN
+  keep-history: true
+  on:
+    branch: master
+  target-branch: gh-pages

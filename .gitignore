@@ -1,0 +1,4 @@
+test/data/**/*.html
+test/index.html
+
+__pycache__
