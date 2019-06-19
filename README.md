@@ -10,7 +10,9 @@ We don't have a Pip package currently, hence we recommend cloning this repositor
 git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygments-lexer
 ```
 
-## Usage in LaTeX
+## Usage in LaTeX with minted
+
+[minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments lexer. As this is a Pygments lexer, we can let minted use it:
 
 ```tex
 % You MUST USE XeLaTeX (or other LaTeX-derivatives which support Unicode)
@@ -26,20 +28,29 @@ git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygment
 	fontfamily=unifont
 }
 
+% "./mmt-pygments-lexer" is this repository cloned on your drive
+\newcommand{\mmtPygmentsLexerCommand}{./mmt-pygments-lexer/mmt-pygments-lexer.py:MMTLexer -x}
+
+\newminted[mmtcode]{\mmtPygmentsLexerCommand}{}
+\newmintinline[mmtinline]{\mmtPygmentsLexerCommand}{}
+\newmintedfile[mmtfile]{\mmtPygmentsLexerCommand}{}
+
 \begin{document}
-	% Load from a file
-	\inputminted{mmt-pygments-lexer.py:MMTLexer -x}{your-mmt-file.mmt}
-	
-	% Or inline
-	\begin{minted}{mmt-pygments-lexer.py:MMTLexer -x}
-theory MyTheory =
-	c : type ❘ # abc ❙
-❚
-	\end{minted}
+	% Variant 1: Code given in LaTeX, rendered in display mode
+	\begin{mmtcode}
+		theory MyTheory = c : type ❘ # abc ❙❚
+	\end{mmtcode}
+
+	% Variant 2: Code given in LaTeX, rendered inline
+	% You can use any delimiter you like, here we use /
+	\mmtinline/theory MyTheory = c : type ❘ # abc ❙❚/
+
+	% Variant 3: Code given externally in file, rendered in display mode
+	\mmtfile{mmt-pygments-lexer.py:MMTLexer -x}{your-mmt-file.mmt}
 \end{document}
 ```
 
-See the [minted manual](https://ctan.org/pkg/minted) on how to define shortcuts lest you have to type `mmt-pygments-lexer.py:MMTLexer -x` every time.
+See the [minted manual](https://ctan.org/pkg/minted) for more information on how to customize it.
 
 ## Common Errors
 
