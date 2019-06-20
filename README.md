@@ -1,9 +1,13 @@
 [![Build Status](https://travis-ci.org/ComFreek/mmt-pygments-lexer.svg?branch=master)](https://travis-ci.org/ComFreek/mmt-pygments-lexer)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/32b61ca59aba4a79ae4ab5582f210572)](https://app.codacy.com/app/ComFreek/mmt-pygments-lexer?utm_source=github.com&utm_medium=referral&utm_content=ComFreek/mmt-pygments-lexer&utm_campaign=Badge_Grade_Dashboard)
+![GitHub License](https://img.shields.io/github/license/ComFreek/mmt-pygments-lexer.svg)
+&nbsp;&nbsp;[Collection of rendered codes](https://comfreek.github.io/mmt-pygments-lexer/test/index.html)
 
 # MMT Pygments Lexer
 
 Pygments lexer for [MMT Surface Syntax](https://uniformal.github.io/doc/language/) from the [MMT project](https://uniformal.github.io/).
+
+**Collection of rendered codes:** [click here](https://comfreek.github.io/mmt-pygments-lexer/test/index.html)
 
 ![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/59698193-7523c300-91ef-11e9-8c4b-80ec2d3e4a40.png)
 
