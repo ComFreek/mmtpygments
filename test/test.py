@@ -46,7 +46,7 @@ if __name__ == "__main__":
 	INDEX_FILENAME = 'index.html'
 	INDEX_FILE_BASE_PATH = sys.argv[1]
 
-	TEST_FILES = glob.iglob(path.join(TEST_FILES_DIR, "*.mmt"))
+	TEST_FILES = glob.iglob(path.join(TEST_FILES_DIR, path.join("**", "*.mmt")), recursive = True)
 
 	lexer = MMTLexer(encoding = "utf-8")
 	html_formatter = HtmlFormatter(full = True, encoding = "utf-8")
@@ -55,6 +55,8 @@ if __name__ == "__main__":
 	out_filenames = []
 
 	for test_filename in TEST_FILES:
+		print("Running test for " + test_filename)
+
 		# We read both input and output file in binary mode to circumvent encoding issues
 		# Indeed, we specified above UTF-8 encoding for the lexer and formatter
 		with io.open(test_filename, mode="rb") as test_file:
@@ -63,17 +65,19 @@ if __name__ == "__main__":
 			at_least_one_erroneous = at_least_one_erroneous or erroneous
 
 			if erroneous:
-				sys.stderr.write("File `" + test_filename + "` errored, see corresponding .html file for details.\n")
+				sys.stderr.write("  --> Lexing error, see corresponding .html file for details\n")
 
 			out_filename = test_filename + ".html"
 			out_filenames.append(out_filename)
 			with io.open(out_filename, mode="wb") as out_file:
 				pygments.format(tokens, html_formatter, out_file)
 
+			print("  --> Output at " + out_filename)
+
 	with io.open(INDEX_FILENAME, mode="w") as index_file:
 		generate_index_file(out_filenames, INDEX_FILE_BASE_PATH, index_file)
 
-	print("Wrote index file to " + INDEX_FILENAME)
+	print("\nWrote index file to " + INDEX_FILENAME)
 
 	if at_least_one_erroneous:
 		sys.stderr.write("\nAt least one error occurred, returning with non-zero exit code.\n")
