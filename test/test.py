@@ -164,8 +164,8 @@ def get_test_files():
 
 	# These files make use of the inductive structural feature
 	# which the lexer doesn't support yet
-	excluded_test_files = set(glob.iglob(path.join(TEST_FILES_DIR, '**/LFX/source/HOTT.mmt'))).union(
-		set(glob.iglob(path.join(TEST_FILES_DIR, '**/LFX/source/test.mmt')))
+	excluded_test_files = set(glob.iglob(path.join(TEST_FILES_DIR, '**/*/LFX/source/HOTT.mmt'))).union(
+		set(glob.iglob(path.join(TEST_FILES_DIR, '**/*/LFX/source/test.mmt')))
 	)
 
 	return sorted(list(all_test_files - excluded_test_files))

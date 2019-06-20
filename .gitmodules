@@ -1,9 +1,9 @@
 [submodule "test/data/MitM/Foundation"]
-	path = test/data/MitM/Foundation
+	path = test/data/MathHub/MitM/Foundation
 	url = https://gl.mathhub.info/MitM/Foundation.git
 [submodule "test/data/MMT/urtheories"]
-	path = test/data/MMT/urtheories
+	path = test/data/MathHub/MMT/urtheories
 	url = https://gl.mathhub.info/MMT/urtheories.git
 [submodule "test/data/MMT/LFX"]
-	path = test/data/MMT/LFX
+	path = test/data/MathHub/MMT/LFX
 	url = https://gl.mathhub.info/MMT/LFX.git
