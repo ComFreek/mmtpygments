@@ -36,6 +36,12 @@ def generate_index_file(out_filenames, base_path, index_file):
 <html>
 	<head>
 		<meta charset="utf-8">
+
+		<!-- Don't cache! -->
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0">
+
 		<title>Render Results - mmt-pygments-lexer</title>
 	</head>
 	<body>
