@@ -1,7 +1,8 @@
 [![Build Status](https://travis-ci.org/ComFreek/mmt-pygments-lexer.svg?branch=master)](https://travis-ci.org/ComFreek/mmt-pygments-lexer)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/32b61ca59aba4a79ae4ab5582f210572)](https://app.codacy.com/app/ComFreek/mmt-pygments-lexer?utm_source=github.com&utm_medium=referral&utm_content=ComFreek/mmt-pygments-lexer&utm_campaign=Badge_Grade_Dashboard)
 ![GitHub License](https://img.shields.io/github/license/ComFreek/mmt-pygments-lexer.svg)
-&nbsp;&nbsp;[Collection of rendered codes](https://comfreek.github.io/mmt-pygments-lexer/test/index.html)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+&nbsp;&nbsp; | [GitHub Repo](https://github.com/ComFreek/mmt-pygments-lexer) | [Collection of rendered codes](https://comfreek.github.io/mmt-pygments-lexer/test/index.html)
 
 # MMT Pygments Lexer
 
