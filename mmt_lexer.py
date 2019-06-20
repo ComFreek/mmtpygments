@@ -39,7 +39,7 @@ class MMTLexer(RegexLexer):
 				Keyword.Namespace, Whitespace, String, Whitespace, Punctuation
 			)),
 			(r'(import)(\s+)(\S+)(\s+)(\S+)(\s*)(❚)', bygroups(
-				Keyword.Namespace,Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation
+				Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation
 			)),
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 			(r'(implicit)?(\s+)(view)\b', Keyword.Declaration, 'viewHeader'),
@@ -75,42 +75,37 @@ class MMTLexer(RegexLexer):
 		# Invariant: moduleBody jumps at end two levels up since it assumes a theoryHeader or viewHeader before
 		'moduleBody': [
 		  (r'\s', Whitespace),
+			# Comments
 			(r'\/T .*?❙', Comment.Multiline),
 			(r'\/\/.*?❙', Comment.Multiline),
-			(r'include\b', Keyword.Namespace, 'includeDeclaration'),
-			(r'rule\b', Keyword.Namespace, 'ruleDeclaration'),
+
+			# Special declarations
+			(r'(include)(\s+)([^❙]+)(❙)', bygroups(Keyword.Namespace, Whitespace, String, Punctuation)),
+			(r'(constant)(\s+)([^\s:❘❙]+)', bygroups(Keyword.Declaration, Whitespace, Name.Constant), 'constantDeclaration'),
+			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, String, Whitespace, Punctuation)),
 
 			# Nested theories
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 
+			# Markdown-style header comments
+			(r'(#+)([^❙]+)(❙)', bygroups(String.Doc, String.Doc, Punctuation)),
+
+			# Constant declarations (only if nothing else applied!)
 			(r'[^\s:❘❙❚]+', Name.Constant, 'constantDeclaration'),
-			(r'❚', Punctuation, '#pop:2') # Jump two levels above
-		],
-		'includeDeclaration': [
-			(r'❙', Punctuation, '#pop'),
 
-			# If not end delimiter, interpret everything else as an expression
-			(r'', Whitespace, 'expression')
-		],
-		'ruleDeclaration': [
-			(r'❙', Punctuation, '#pop'),
-
-			# If not end delimiter, interpret everything else as an expression
-			(r'', Whitespace, 'expression')
+			# The end
+			(r'❚', Punctuation, '#pop:2') # Jump two levels above the theoryHeader or viewHeader
 		],
 		'constantDeclaration': [
 			(r'\s', Whitespace),
 			(r':', Punctuation, 'expression'),
 			(r'=', Punctuation, 'expression'),
 			(r'#', Punctuation, 'notationExpression'),
-			(r'@', Punctuation, 'aliasExpression'),
+			(r'(@)([^❘❙]+)', bygroups(Punctuation, Name.Constant)),
 			(r'role\b', Keyword, 'expression'),
 			(r'(\/\/.*?)(?=❘|❙)', bygroups(Comment.Multiline, None)),
 			(r'❘', Punctuation),
 			(r'❙', Punctuation, '#pop')
-		],
-		'aliasExpression': [
-			(r'[^❘❙]+', Name.Constant, '#pop')
 		],
 		'notationExpression': [
 			# Lexing rule for notations specifying precedence
