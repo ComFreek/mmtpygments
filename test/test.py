@@ -25,20 +25,40 @@ from mmt_lexer import MMTLexer
 
 def generate_index_file(out_filenames, base_path, index_file):
 	# TODO Insecure HTML Injection!
-	html_anchors = (
+	html_anchors = list((
 		"<a href='" + base_path + out_filename.replace("\\", "/") + "'>" + out_filename + "</a>"
 
 		for out_filename in out_filenames
-	)
+	))
 
-	index_file.write("".join(html_anchors))
+	index_file.write("""
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Render Results - mmt-pygments-lexer</title>
+	</head>
+	<body>
+		<h1>Render Results</h1>""")
+	if len(html_anchors) == 0:
+		index_file.write("There are none, is the Travis build working? Please submit an issue.")
+	else:
+		index_file.write("<ul>")
+		index_file.write("".join("<li>" + anchor + "</li>" for anchor in html_anchors))
+		index_file.write("</ul>")
+
+	index_file.write("""
+		</ul>
+	</body>
+</html>""")
 
 if __name__ == "__main__":
 	lexer = MMTLexer()
 
 	if len(sys.argv) != 2:
 		sys.stderr.write("Usage: " + sys.argv[0] + " Base-Path-To-Use-For-Links-In-Generated-HTML-Index-File\n")
-		sys.stderr.write("E.g. https://example.com/")
+		sys.stderr.write("E.g. https://comfreek.github.io/mmt-pygments-lexer/test/ or ./ for local tests")
+		sys.stderr.write("Pay attention to the required trailing slash!")
 
 		sys.exit(1)
 
