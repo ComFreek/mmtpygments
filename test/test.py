@@ -23,7 +23,7 @@ import sys
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from mmt_lexer import MMTLexer
 
-def generate_index_file(out_statuses, base_path, index_file):
+def generate_index_file(out_statuses, base_path, amalgamation_filename, index_file):
 	"""Generate index file linking to all rendered HTML files.
 
 	Args:
@@ -32,7 +32,7 @@ def generate_index_file(out_statuses, base_path, index_file):
 		              indicating whether an error occured.
 
 		base_path:    Base path to use for links
-		index_file:   File object to write the index HTML to, opened with encoding UTF-8!
+		index_file:   File object to write the index HTML to, opened as text with encoding UTF-8!
 	"""
 
 	def error_to_symbol(error):
@@ -40,16 +40,6 @@ def generate_index_file(out_statuses, base_path, index_file):
 			return "❌"
 		else:
 			return "✓"
-
-	# TODO Insecure HTML Injection!
-	html_anchors = list((
-		"<a href='" + base_path + filename.replace("\\", "/") + "'>" + error_to_symbol(error) + " " + filename + "</a>"
-
-		for (filename, error) in (
-			(out_status["filename"], out_status["error"])
-			for out_status in out_statuses
-		)
-	))
 
 	index_file.write("""
 <!doctype html>
@@ -62,10 +52,30 @@ def generate_index_file(out_statuses, base_path, index_file):
 		<meta http-equiv="Pragma" content="no-cache" />
 		<meta http-equiv="Expires" content="0">
 
-		<title>Render Results - mmt-pygments-lexer</title>
+		<title>Index of Render Results - mmt-pygments-lexer</title>
+	""")
+	index_file.write("<base href='" + base_path + "'>")
+	index_file.write("""
 	</head>
 	<body>
-		<h1>Render Results</h1>""")
+		<h1>Render Results</h1>
+	""")
+
+	index_file.write("<h2><a href='" + amalgamation_filename + "'>Amalgamation of Render Results</h2>")
+	index_file.write("""
+		<h2>Overview</h2>
+	""")
+
+	# TODO Insecure HTML Injection!
+	html_anchors = list((
+		"<a href='" + filename.replace("\\", "/") + "'>" + error_to_symbol(error) + " " + filename + "</a>"
+
+		for (filename, error) in (
+			(out_status["filename"], out_status["error"])
+			for out_status in out_statuses
+		)
+	))
+
 	if len(html_anchors) == 0:
 		index_file.write("There are none, is the Travis build working? Please submit an issue.")
 	else:
@@ -78,29 +88,50 @@ def generate_index_file(out_statuses, base_path, index_file):
 	</body>
 </html>""")
 
-if __name__ == "__main__":
-	lexer = MMTLexer()
+def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, amalgamation_filename):
+	"""Run all tests and produce HTML render results.
 
-	if len(sys.argv) != 2:
-		sys.stderr.write("Usage: " + sys.argv[0] + " Base-Path-To-Use-For-Links-In-Generated-HTML-Index-File\n")
-		sys.stderr.write("E.g. https://comfreek.github.io/mmt-pygments-lexer/test/ or ./ for local tests")
-		sys.stderr.write("Pay attention to the required trailing slash!")
+	Args:
+		test_files: An iterable of filenames to lex, test and render
+		index_file: A file object to write the HTML index to linking all render results
+		            It must be opened as a text file with UTF-8 encoding.
+		index_file_base_path: Base path to use for links in index
+		amalgamation_file: A file object to write all HTML render results subsequently to
+		                   It must be opened as a binary file and it will be written to with UTF-8 encoding.
 
-		sys.exit(1)
-
-	TEST_FILES_DIR = 'data'
-	INDEX_FILENAME = 'index.html'
-	INDEX_FILE_BASE_PATH = sys.argv[1]
-
-	TEST_FILES = glob.iglob(path.join(TEST_FILES_DIR, path.join("**", "*.mmt")), recursive = True)
+	Return:
+		True on success, False if at least one file could not be lexed error-free.
+	"""
 
 	lexer = MMTLexer(encoding = "utf-8")
-	html_formatter = HtmlFormatter(full = True, encoding = "utf-8")
+	full_html_formatter = HtmlFormatter(full = True, encoding = "utf-8")
+	snippet_html_formatter = HtmlFormatter(full = False, encoding = "utf-8")
+
+	amalgamation_file.write(b"""
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Don't cache! -->
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0">
+
+		<title>Amalgamation of Render Results - mmt-pygments-lexer</title>
+	</head>
+	<body>
+		<h1>Amalgamation of Render Results</h1>
+""")
+
+	amalgamation_file.write(b"<style>")
+	amalgamation_file.write(snippet_html_formatter.get_style_defs().encode("utf-8"))
+	amalgamation_file.write(b"</style>")
 
 	at_least_one_erroneous = False
 	out_statuses = []
 
-	for test_filename in TEST_FILES:
+	for test_filename in test_files:
 		print("Running test for " + test_filename)
 
 		# We read both input and output file in binary mode to circumvent encoding issues
@@ -116,15 +147,44 @@ if __name__ == "__main__":
 			out_filename = test_filename + ".html"
 			out_statuses.append({"filename": out_filename, "error": erroneous})
 			with io.open(out_filename, mode="wb") as out_file:
-				pygments.format(tokens, html_formatter, out_file)
+				pygments.format(tokens, full_html_formatter, out_file)
+				pygments.format(tokens, snippet_html_formatter, amalgamation_file)
 
 			print("  --> Output at " + out_filename)
 
-	with io.open(INDEX_FILENAME, mode="w", encoding="utf-8") as index_file:
-		generate_index_file(out_statuses, INDEX_FILE_BASE_PATH, index_file)
+	generate_index_file(out_statuses, index_file_base_path, amalgamation_filename, index_file)
 
-	print("\nWrote index file to " + INDEX_FILENAME)
+	amalgamation_file.write(b"</body></html>")
 
-	if at_least_one_erroneous:
-		sys.stderr.write("\nAt least one error occurred, returning with non-zero exit code.\n")
+	return at_least_one_erroneous == 0
+
+if __name__ == "__main__":
+	lexer = MMTLexer()
+
+	if len(sys.argv) != 2:
+		sys.stderr.write("Usage: " + sys.argv[0] + " Base-Path-To-Use-For-Links-In-Generated-HTML-Index-File\n")
+		sys.stderr.write("E.g. https://comfreek.github.io/mmt-pygments-lexer/test/ or ./ for local tests")
+		sys.stderr.write("Pay attention to the required trailing slash!")
+
 		sys.exit(1)
+
+	TEST_FILES_DIR = 'data'
+	INDEX_FILENAME = 'index.html'
+	AMALGAMATION_FILENAME = 'amalgamation.html'
+	INDEX_FILE_BASE_PATH = sys.argv[1]
+
+	TEST_FILES = glob.iglob(path.join(TEST_FILES_DIR, path.join("**", "*.mmt")), recursive = True)
+
+	with io.open(INDEX_FILENAME, "w", encoding = "utf-8") as index_file, io.open(AMALGAMATION_FILENAME, "wb") as amalgamation_file:
+		tests_succeeded = run_tests(
+			test_files = TEST_FILES,
+			index_file = index_file,
+			index_file_base_path = INDEX_FILE_BASE_PATH,
+			amalgamation_file = amalgamation_file,
+			amalgamation_filename = AMALGAMATION_FILENAME
+		)
+
+		if not tests_succeeded:
+			sys.stderr.write("\nAt least one error occurred, returning with non-zero exit code.\n")
+			sys.exit(1)
+
