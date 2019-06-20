@@ -41,7 +41,7 @@ class MMTLexer(RegexLexer):
 			(r'(import)(\s+)(\S+)(\s+)(\S+)(\s*)(❚)', bygroups(
 				Keyword.Namespace,Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation
 			)),
-			(r'theory', Keyword.Declaration, 'theoryHeader'),
+			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 			(r'(implicit)?(\s+)(view)\b', Keyword.Declaration, 'viewHeader'),
 			(r'\/T .*?❚', Comment.Multiline),
 			(r'\/\/.*?❚', Comment.Multiline)
@@ -79,6 +79,10 @@ class MMTLexer(RegexLexer):
 			(r'\/\/.*?❙', Comment.Multiline),
 			(r'include\b', Keyword.Namespace, 'includeDeclaration'),
 			(r'rule\b', Keyword.Namespace, 'ruleDeclaration'),
+
+			# Nested theories
+			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
+
 			(r'[^\s:❘❙❚]+', Name.Constant, 'constantDeclaration'),
 			(r'❚', Punctuation, '#pop:2') # Jump two levels above
 		],

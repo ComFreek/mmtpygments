@@ -23,12 +23,32 @@ import sys
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from mmt_lexer import MMTLexer
 
-def generate_index_file(out_filenames, base_path, index_file):
+def generate_index_file(out_statuses, base_path, index_file):
+	"""Generate index file linking to all rendered HTML files.
+
+	Args:
+		out_statuses: An iterable of dictionaries {filename: ..., error: ...}, where
+		              filename points to the rendered HTML file and error is a boolean
+		              indicating whether an error occured.
+
+		base_path:    Base path to use for links
+		index_file:   File object to write the index HTML to, opened with encoding UTF-8!
+	"""
+
+	def error_to_symbol(error):
+		if error:
+			return "❌"
+		else:
+			return "✓"
+
 	# TODO Insecure HTML Injection!
 	html_anchors = list((
-		"<a href='" + base_path + out_filename.replace("\\", "/") + "'>" + out_filename + "</a>"
+		"<a href='" + base_path + filename.replace("\\", "/") + "'>" + error_to_symbol(error) + " " + filename + "</a>"
 
-		for out_filename in out_filenames
+		for (filename, error) in (
+			(out_status["filename"], out_status["error"])
+			for out_status in out_statuses
+		)
 	))
 
 	index_file.write("""
@@ -78,7 +98,7 @@ if __name__ == "__main__":
 	html_formatter = HtmlFormatter(full = True, encoding = "utf-8")
 
 	at_least_one_erroneous = False
-	out_filenames = []
+	out_statuses = []
 
 	for test_filename in TEST_FILES:
 		print("Running test for " + test_filename)
@@ -94,14 +114,14 @@ if __name__ == "__main__":
 				sys.stderr.write("  --> Lexing error, see corresponding .html file for details\n")
 
 			out_filename = test_filename + ".html"
-			out_filenames.append(out_filename)
+			out_statuses.append({"filename": out_filename, "error": erroneous})
 			with io.open(out_filename, mode="wb") as out_file:
 				pygments.format(tokens, html_formatter, out_file)
 
 			print("  --> Output at " + out_filename)
 
-	with io.open(INDEX_FILENAME, mode="w") as index_file:
-		generate_index_file(out_filenames, INDEX_FILE_BASE_PATH, index_file)
+	with io.open(INDEX_FILENAME, mode="w", encoding="utf-8") as index_file:
+		generate_index_file(out_statuses, INDEX_FILE_BASE_PATH, index_file)
 
 	print("\nWrote index file to " + INDEX_FILENAME)
 
