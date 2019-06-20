@@ -35,8 +35,8 @@ class MMTLexer(RegexLexer):
 	tokens = {
 		'root': [
 			(r'\s', Whitespace),
-			(r'(namespace)(\s+)(\S+)(❚)', bygroups(Keyword.Namespace, Whitespace, String, Punctuation)),
-			(r'(import)(\s+)(\S+)(\s+)(\S+)(❚)', bygroups(Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, String, Punctuation)),
+			(r'(namespace)(\s+)(\S+)(\s*)(❚)', bygroups(Keyword.Namespace, Whitespace, String, Whitespace, Punctuation)),
+			(r'(import)(\s+)(\S+)(\s+)(\S+)(\s*)(❚)', bygroups(Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation)),
 			(r'theory', Keyword.Declaration, 'theoryHeader'),
 			(r'view\b', Keyword.Declaration, 'viewHeader'),
 			(r'\/T .*?❚', Comment.Multiline),
@@ -95,21 +95,26 @@ class MMTLexer(RegexLexer):
 			(r':', Punctuation, 'expression'),
 			(r'=', Punctuation, 'expression'),
 			(r'#', Punctuation, 'notationExpression'),
+			(r'@', Punctuation, 'aliasExpression'),
 			(r'role\b', Keyword, 'expression'),
+			(r'(\/\/.*?)(?=❘|❙)', bygroups(Comment.Multiline, None)),
 			(r'❘', Punctuation),
 			(r'❙', Punctuation, '#pop')
 		],
+		'aliasExpression': [
+			(r'[^❘❙]+', Name.Constant, '#pop')
+		],
 		'notationExpression': [
 			# Lexing rule for notations specifying precedence
-			(r'([^❘❙❚=]+)(\bprec)(\s+)(-?\d+)', bygroups(String, Keyword, Whitespace, Number.Integer), '#pop'),
+			(r'([^❘❙]+)(\bprec)(\s+)(-?\d+)', bygroups(String, Keyword, Whitespace, Number.Integer), '#pop'),
 
 			# And for notations without
 			# (Theoretically, both could be merged into one regex, however I couldn't figure out bygroups usage in that case.)
-			(r'([^❘❙❚=]+)', bygroups(String), '#pop')
+			(r'([^❘❙]+)', bygroups(String), '#pop')
 		],
 		'expression': [
 			(r'\s', Whitespace),
-			(r'[^❘❙❚=]+', String, '#pop')
+			(r'[^❘❙]+', String, '#pop')
 		],
 	}
 
