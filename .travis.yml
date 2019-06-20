@@ -15,6 +15,9 @@ cache: pip
 script:
   - cd test && python test.py https://comfreek.github.io/mmt-pygments-lexer/test/
 
+before_deploy:
+  - ls -R .
+
 deploy:
   provider: pages
   skip_cleanup: true
