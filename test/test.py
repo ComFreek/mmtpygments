@@ -63,7 +63,7 @@ def generate_index_file(out_statuses, base_path, amalgamation_filename, index_fi
 	index_file.write(str(datetime.now()))
 
 	index_file.write("""
-		<h2>
+		<hr>
 	""")
 
 	index_file.write("<h2><a href='" + amalgamation_filename + "'>Amalgamation of Render Results (click)</a></h2>")
