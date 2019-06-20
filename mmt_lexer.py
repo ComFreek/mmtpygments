@@ -35,8 +35,12 @@ class MMTLexer(RegexLexer):
 	tokens = {
 		'root': [
 			(r'\s', Whitespace),
-			(r'(namespace)(\s+)(\S+)(\s*)(❚)', bygroups(Keyword.Namespace, Whitespace, String, Whitespace, Punctuation)),
-			(r'(import)(\s+)(\S+)(\s+)(\S+)(\s*)(❚)', bygroups(Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation)),
+			(r'(namespace)(\s+)(\S+)(\s*)(❚)', bygroups(
+				Keyword.Namespace, Whitespace, String, Whitespace, Punctuation
+			)),
+			(r'(import)(\s+)(\S+)(\s+)(\S+)(\s*)(❚)', bygroups(
+				Keyword.Namespace,Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation
+			)),
 			(r'theory', Keyword.Declaration, 'theoryHeader'),
 			(r'view\b', Keyword.Declaration, 'viewHeader'),
 			(r'\/T .*?❚', Comment.Multiline),
