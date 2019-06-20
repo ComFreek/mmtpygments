@@ -12,6 +12,7 @@ import pygments
 from pygments.formatters.html import HtmlFormatter
 from pygments.token import Token
 
+from datetime import datetime
 import glob
 import io
 from os import path
@@ -57,6 +58,12 @@ def generate_index_file(out_statuses, base_path, amalgamation_filename, index_fi
 	</head>
 	<body>
 		<h1>Render Results</h1>
+		Last update:
+	""")
+	index_file.write(str(datetime.now()))
+
+	index_file.write("""
+		<h2>
 	""")
 
 	index_file.write("<h2><a href='" + amalgamation_filename + "'>Amalgamation of Render Results (click)</a></h2>")
