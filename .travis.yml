@@ -16,6 +16,8 @@ script:
   - cd test && python test.py https://comfreek.github.io/mmt-pygments-lexer/test/ && cd ..
 
 before_deploy:
+  # So that our render results, which are ignored by this very .gitignore, are actually published
+  # to gh-pages.
   - rm test/.gitignore
 
 deploy:
