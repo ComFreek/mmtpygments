@@ -1,0 +1,4 @@
+# This .gitignore file will be deleted by our Travis script before deploy
+
+data/**/*.html
+index.html

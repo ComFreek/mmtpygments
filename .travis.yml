@@ -13,14 +13,13 @@ install:
 cache: pip
 
 script:
-  - cd test && python test.py https://comfreek.github.io/mmt-pygments-lexer/test/
+  - cd test && python test.py https://comfreek.github.io/mmt-pygments-lexer/test/ && cd ..
 
 before_deploy:
-  - ls -R .
+  - rm test/.gitignore
 
 deploy:
   provider: pages
-  local_dir: .
   skip_cleanup: true
   github-token: $GITHUB_PAGES_DEPLOYMENT_TOKEN
   keep-history: true
