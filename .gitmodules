@@ -1,0 +1,3 @@
+[submodule "test/data/MitM/Foundation"]
+	path = test/data/MitM/Foundation
+	url = https://gl.mathhub.info/MitM/Foundation.git

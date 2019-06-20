@@ -42,7 +42,7 @@ class MMTLexer(RegexLexer):
 				Keyword.Namespace,Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation
 			)),
 			(r'theory', Keyword.Declaration, 'theoryHeader'),
-			(r'view\b', Keyword.Declaration, 'viewHeader'),
+			(r'(implicit)?(\s+)(view)\b', Keyword.Declaration, 'viewHeader'),
 			(r'\/T .*?❚', Comment.Multiline),
 			(r'\/\/.*?❚', Comment.Multiline)
 		],
