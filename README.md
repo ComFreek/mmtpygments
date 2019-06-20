@@ -72,7 +72,7 @@ If you tab characters in the MMT source being highlighted and they are shown in 
 
 The lexer is heavily tested on large MMT archives containing a lot of MMT surface syntax. [`test/test.py`](./blob/master/test/test.py) is the main entry point of the test infrastructure. It recursively searches for MMT files in `test/data` and runs the lexer on them and formats them afterwards with Pygment's HtmlFormatter. The rendered versions are written next to the original `*.mmt` file with an `.html` extension. Furthermore, `index.html` and `amalgamation.html` are generated to link and display the results, respectively.
 
-The Travis build automatically runs [`test/test.py`](./blob/master/test/test.py) and deploys the results on the `gh-pages` branch, see https://comfreek.github.io/mmt-pygments-lexer/ and especially https://comfreek.github.io/mmt-pygments-lexer/test/index.html.
+The Travis build automatically runs [`test/test.py`](./blob/master/test/test.py) and deploys the results on the `gh-pages` branch, see <https://comfreek.github.io/mmt-pygments-lexer/> and especially <https://comfreek.github.io/mmt-pygments-lexer/test/index.html>.
 
 ## Development
 
