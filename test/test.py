@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-	Pygments Lexer for MMT Surface Syntax
+	Test Suite for the MMT Pygments lexer
 	~~~~~~~~~~~~~~~~~~~~
-
-	The MMT project can be found at https://uniformal.github.io/.
 
 	:author: ComFreek <comfreek@outlook.com>
 	:copyright: Copyright 2019 ComFreek
@@ -158,6 +156,20 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 
 	return at_least_one_erroneous == 0
 
+def get_test_files():
+	"""Return an iterable of all test files in sorted order to consider for testing."""
+	TEST_FILES_DIR = 'data'
+
+	all_test_files = set(glob.iglob(path.join(TEST_FILES_DIR, path.join("**", "*.mmt")), recursive = True))
+
+	# These files make use of the inductive structural feature
+	# which the lexer doesn't support yet
+	excluded_test_files = set(glob.iglob(path.join(TEST_FILES_DIR, '**/LFX/source/HOTT.mmt'))).union(
+		set(glob.iglob(path.join(TEST_FILES_DIR, '**/LFX/source/test.mmt')))
+	)
+
+	return sorted(list(all_test_files - excluded_test_files))
+
 if __name__ == "__main__":
 	lexer = MMTLexer()
 
@@ -168,16 +180,14 @@ if __name__ == "__main__":
 
 		sys.exit(1)
 
-	TEST_FILES_DIR = 'data'
 	INDEX_FILENAME = 'index.html'
 	AMALGAMATION_FILENAME = 'amalgamation.html'
 	INDEX_FILE_BASE_PATH = sys.argv[1]
-
-	TEST_FILES = glob.iglob(path.join(TEST_FILES_DIR, path.join("**", "*.mmt")), recursive = True)
+	test_files = get_test_files()
 
 	with io.open(INDEX_FILENAME, "w", encoding = "utf-8") as index_file, io.open(AMALGAMATION_FILENAME, "wb") as amalgamation_file:
 		tests_succeeded = run_tests(
-			test_files = TEST_FILES,
+			test_files = test_files,
 			index_file = index_file,
 			index_file_base_path = INDEX_FILE_BASE_PATH,
 			amalgamation_file = amalgamation_file,
@@ -187,4 +197,3 @@ if __name__ == "__main__":
 		if not tests_succeeded:
 			sys.stderr.write("\nAt least one error occurred, returning with non-zero exit code.\n")
 			sys.exit(1)
-

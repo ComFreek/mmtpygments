@@ -4,3 +4,6 @@
 [submodule "test/data/MMT/urtheories"]
 	path = test/data/MMT/urtheories
 	url = https://gl.mathhub.info/MMT/urtheories.git
+[submodule "test/data/MMT/LFX"]
+	path = test/data/MMT/LFX
+	url = https://gl.mathhub.info/MMT/LFX.git
