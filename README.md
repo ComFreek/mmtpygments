@@ -62,10 +62,18 @@ git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygment
 
 See the [minted manual](https://ctan.org/pkg/minted) for more information on how to customize it.
 
-## Common Errors
-
-### Rendered PDF shows tab characters of source
+#### Common Error: Rendered PDF shows tab characters of source
 
 If you tab characters in the MMT source being highlighted and they are shown in the PDF rendered by XeLaTeX, you face a known bug of XeLaTeX ([\[1\]](https://tex.stackexchange.com/a/36872/38074), [\[2\]](https://tex.stackexchange.com/a/14776/38074)). It can be solved by passing `-8bit` to XeLaTeX.
 
 ![image](https://user-images.githubusercontent.com/1827709/59755955-23c81200-9289-11e9-92c5-1659b60d03d1.png)
+
+## Testing
+
+The lexer is heavily tested on large MMT archives containing a lot of MMT surface syntax. [`test/test.py`](./blob/master/test/test.py) is the main entry point of the test infrastructure. It recursively searches for MMT files in `test/data` and runs the lexer on them and formats them afterwards with Pygment's HtmlFormatter. The rendered versions are written next to the original `*.mmt` file with an `.html` extension. Furthermore, `index.html` and `amalgamation.html` are generated to link and display the results, respectively.
+
+The Travis build automatically runs [`test/test.py`](./blob/master/test/test.py) and deploys the results on the `gh-pages` branch, see https://comfreek.github.io/mmt-pygments-lexer/ and especially https://comfreek.github.io/mmt-pygments-lexer/test/index.html.
+
+## Development
+
+For tinkering and testing the lexer, it is recommended to employ the same testing infrastructure as described above. Even though the Travis build fails on lexing error, [`test/test.py`](./blob/master/test/test.py) actually doesn't -- it just returns a non-zero exit code. In fact, it even generates the HTML renderings with red rectangles around lexing errors. Hence, while tinkering with the lexer, just regularly run [`test/test.py`](./blob/master/test/test.py) and look at the `index.html` locally in your browser to see any errors.
