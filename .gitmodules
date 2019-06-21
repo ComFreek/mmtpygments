@@ -7,3 +7,6 @@
 [submodule "test/data/MMT/LFX"]
 	path = test/data/MathHub/MMT/LFX
 	url = https://gl.mathhub.info/MMT/LFX.git
+[submodule "test/data/MathHub/Almanac/context-graph"]
+	path = test/data/MathHub/Almanac/context-graph
+	url = https://gl.mathhub.info/Almanac/context-graph.git

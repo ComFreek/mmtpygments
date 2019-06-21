@@ -42,7 +42,8 @@ class MMTLexer(RegexLexer):
 				Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation
 			)),
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
-			(r'(implicit)?(\s+)(view)\b', Keyword.Declaration, 'viewHeader'),
+			(r'(implicit)(\s+)(view)\b', bygroups(Keyword.Declaration, Whitespace, Keyword.Declaration), 'viewHeader'),
+			(r'(view)\b', Keyword.Declaration, 'viewHeader'),
 			(r'\/T .*?❚', Comment.Multiline),
 			(r'\/\/.*?❚', Comment.Multiline)
 		],
@@ -56,7 +57,7 @@ class MMTLexer(RegexLexer):
 		],
 		'viewHeader': [
 			(r'\s', Whitespace),
-			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->)(\s*)(\S+)(\s*)(=)', bygroups(
+			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)(\S+)(\s*)(=)', bygroups(
 					Name.Variable,
 					Whitespace,
 					Punctuation,
