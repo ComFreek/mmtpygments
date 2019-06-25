@@ -1,16 +1,16 @@
 [submodule "test/data/MitM/Foundation"]
-	path = test/data/MathHub/MitM/Foundation
+	path = mmtpygments/test/data/MathHub/MitM/Foundation
 	url = https://gl.mathhub.info/MitM/Foundation.git
 	ignore = untracked
 [submodule "test/data/MMT/urtheories"]
-	path = test/data/MathHub/MMT/urtheories
+	path = mmtpygments/test/data/MathHub/MMT/urtheories
 	url = https://gl.mathhub.info/MMT/urtheories.git
 	ignore = untracked
 [submodule "test/data/MMT/LFX"]
-	path = test/data/MathHub/MMT/LFX
+	path = mmtpygments/test/data/MathHub/MMT/LFX
 	url = https://gl.mathhub.info/MMT/LFX.git
 	ignore = untracked
 [submodule "test/data/MathHub/Almanac/context-graph"]
-	path = test/data/MathHub/Almanac/context-graph
+	path = mmtpygments/test/data/MathHub/Almanac/context-graph
 	url = https://gl.mathhub.info/Almanac/context-graph.git
 	ignore = untracked
