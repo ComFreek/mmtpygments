@@ -60,6 +60,8 @@ git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygment
 \end{document}
 ```
 
+LaTeX Beamer: Use the `fragile` option for frames embedding codes: `\begin{frame}[fragile] ... \end{frame}`
+
 See the [minted manual](https://ctan.org/pkg/minted) for more information on how to customize it.
 
 #### Common Error: Rendered PDF shows tab characters of source
