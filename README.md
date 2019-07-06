@@ -2,13 +2,13 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/32b61ca59aba4a79ae4ab5582f210572)](https://app.codacy.com/app/ComFreek/mmt-pygments-lexer?utm_source=github.com&utm_medium=referral&utm_content=ComFreek/mmt-pygments-lexer&utm_campaign=Badge_Grade_Dashboard)
 ![GitHub License](https://img.shields.io/github/license/ComFreek/mmt-pygments-lexer.svg)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-&nbsp;&nbsp; | [GitHub Repo](https://github.com/ComFreek/mmt-pygments-lexer) | [Collection of rendered codes](https://comfreek.github.io/mmt-pygments-lexer/test/index.html)
+&nbsp;&nbsp; | [GitHub Repo](https://github.com/ComFreek/mmt-pygments-lexer) | [Collection of rendered codes](https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html)
 
 # MMT Pygments Lexer
 
 Pygments lexer for [MMT Surface Syntax](https://uniformal.github.io/doc/language/) from the [MMT project](https://uniformal.github.io/).
 
-**Collection of rendered codes:** [click here](https://comfreek.github.io/mmt-pygments-lexer/test/index.html)
+**Collection of rendered codes:** [click here](https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html)
 
 ![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/59698193-7523c300-91ef-11e9-8c4b-80ec2d3e4a40.png)
 
@@ -74,8 +74,16 @@ If you tab characters in the MMT source being highlighted and they are shown in 
 
 The lexer is heavily tested on large MMT archives containing a lot of MMT surface syntax. [`test/test.py`](./blob/master/test/test.py) is the main entry point of the test infrastructure. It recursively searches for MMT files in `test/data` and runs the lexer on them and formats them afterwards with Pygment's HtmlFormatter. The rendered versions are written next to the original `*.mmt` file with an `.html` extension. Furthermore, `index.html` and `amalgamation.html` are generated to link and display the results, respectively.
 
-The Travis build automatically runs [`test/test.py`](./blob/master/test/test.py) and deploys the results on the `gh-pages` branch, see <https://comfreek.github.io/mmt-pygments-lexer/> and especially <https://comfreek.github.io/mmt-pygments-lexer/test/index.html>.
+The Travis build automatically runs [`test/test.py`](./blob/master/test/test.py) and deploys the results on the `gh-pages` branch, see <https://comfreek.github.io/mmt-pygments-lexer/> and especially <https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html>.
 
 ## Development
 
 For tinkering and testing the lexer, it is recommended to employ the same testing infrastructure as described above. Even though the Travis build fails on lexing error, [`test/test.py`](./blob/master/test/test.py) actually doesn't -- it just returns a non-zero exit code. In fact, it even generates the HTML renderings with red rectangles around lexing errors. Hence, while tinkering with the lexer, just regularly run [`test/test.py`](./blob/master/test/test.py) and look at the `index.html` locally in your browser to see any errors.
+
+## For future maintainers: necessary changes in case of repository movement
+
+In case you wish to host this repository or a fork thereof somewhere else, these are the places where you have to make changes:
+
+  - `README.md`: Change all links to deployed `gh-pages` branch render results accordingly.
+  - `.travis.yml`: Change the base path with which `python test.py` is run to your hosting URI.
+
