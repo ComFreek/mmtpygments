@@ -16,8 +16,11 @@ script:
   - pushd mmtpygments/test && python test.py https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/ && popd
 
 before_deploy:
-  # So that our render results, which are ignored by this very .gitignore, are actually published
-  # to gh-pages.
+  # Prevent auxiliary and other compilation artifacts from the MMT Git submodule archives to be pushed to gh-pages
+  # We just want the rendered .mmt.html output files
+  - find mmtpygments/test/data -type f ! -name '*.mmt.html' -delete
+
+  # This .gitignore ignores the very .mmt.html output files, hence delete it before deployment to gh-pages
   - rm mmtpygments/test/.gitignore
 
 deploy:
