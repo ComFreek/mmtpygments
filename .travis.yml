@@ -13,7 +13,7 @@ install:
 cache: pip
 
 script:
-  - pushd mmtpygments/test && python test.py https://comfreek.github.io/mmt-pygments-lexer/test/ && popd
+  - pushd mmtpygments/test && python test.py https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/ && popd
 
 before_deploy:
   # So that our render results, which are ignored by this very .gitignore, are actually published
