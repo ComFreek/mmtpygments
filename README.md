@@ -4,28 +4,35 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 &nbsp;&nbsp; | [GitHub Repo](https://github.com/ComFreek/mmt-pygments-lexer) | [Collection of rendered codes](https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html)
 
-# MMT Pygments Lexer
+# mmtpygments: Pygments plugin for MMT surface syntax
 
-Pygments lexer for [MMT Surface Syntax](https://uniformal.github.io/doc/language/) from the [MMT project](https://uniformal.github.io/).
+To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.github.io/doc/language/) from the [MMT project](https://uniformal.github.io/) this package is a Pygments plugin including
 
-**Collection of rendered codes:** [click here](https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html)
+- a Pygments lexer (`mmt`)
+- a recommended Pygments style for it (`mmtdefault`)
+- and experimentally a Pygments lexer for MMT relational data (`mmtrel`).
 
+**Collection of rendered codes:** [click here](https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html)<br>
+**Screenshot:**<br>
 ![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/59698193-7523c300-91ef-11e9-8c4b-80ec2d3e4a40.png)
 
-## Usage
+## Installation
 
-We don't have a Pip package currently, hence we recommend cloning this repository as a Git submodule:
+### Via Pip (recommended)
 
-```bash
-git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygments-lexer
-```
+1. `pip install Pygments mmtpygments`
+2. Use as you wish with Pygments, e.g. run on CLI:
 
-### Usage in LaTeX with minted
+   `pygmentize -f html -l mmt -O full,style=mmtdefault -o test.html test.mmt`
 
-[minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments lexer. As this is a Pygments lexer, we can let minted use it:
+   This tells Pygments to use the HTML formatter (`-f`), the MMT lexer (`-l`) and to output a full HTML file using the `mmtdefault` style (`-O`) rendered of `test.mmt` into `test.html` (`-o`).
+
+## Usage in LaTeX with minted
+
+[minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments as the backend.
 
 ```tex
-% You MUST USE XeLaTeX (or other LaTeX-derivatives which support Unicode)
+% You MUST USE XeLaTeX (or any other LaTeX-derivative which supports Unicode)
 \usepackage{fontspec}
 
 % Download GNU Unifont from http://unifoundry.com/unifont/index.html
@@ -38,12 +45,9 @@ git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygment
 	fontfamily=unifont
 }
 
-% "./mmt-pygments-lexer" is this repository cloned on your drive
-\newcommand{\mmtPygmentsLexerCommand}{./mmt-pygments-lexer/mmtpygments/mmt_lexer.py:MMTLexer -x}
-
-\newminted[mmtcode]{\mmtPygmentsLexerCommand}{}
-\newmintinline[mmtinline]{\mmtPygmentsLexerCommand}{}
-\newmintedfile[mmtfile]{\mmtPygmentsLexerCommand}{}
+\newminted[mmtcode]{mmt}{}
+\newmintinline[mmtinline]{mmt}{}
+\newmintedfile[mmtfile]{mmt}{}
 
 \begin{document}
 	% Variant 1: Code given in LaTeX, rendered in display mode
@@ -60,7 +64,7 @@ git submodule add https://github.com/ComFreek/mmt-pygments-lexer.git mmt-pygment
 \end{document}
 ```
 
-LaTeX Beamer: Use the `fragile` option for frames embedding codes: `\begin{frame}[fragile] ... \end{frame}`
+**LaTeX Beamer**: Use the `fragile` option for frames embedding codes: `\begin{frame}[fragile] ... \end{frame}`
 
 See the [minted manual](https://ctan.org/pkg/minted) for more information on how to customize it.
 

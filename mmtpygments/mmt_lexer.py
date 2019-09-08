@@ -13,8 +13,8 @@
 import re
 
 from pygments.lexer import RegexLexer, bygroups
-from pygments.token import Comment, Keyword, Name, String, \
-	Number, Punctuation, Whitespace
+from pygments.token import Comment, Keyword, Name, Number, \
+	Punctuation, String, Token, Whitespace
 
 __all__ = ['MMTLexer']
 
@@ -36,10 +36,10 @@ class MMTLexer(RegexLexer):
 		'root': [
 			(r'\s', Whitespace),
 			(r'(namespace)(\s+)(\S+)(\s*)(❚)', bygroups(
-				Keyword.Namespace, Whitespace, String, Whitespace, Punctuation
+				Keyword.Namespace, Whitespace, String, Whitespace, Token.MMT_MD
 			)),
 			(r'(import)(\s+)(\S+)(\s+)(\S+)(\s*)(❚)', bygroups(
-				Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, String, Whitespace, Punctuation
+				Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, String, Whitespace, Token.MMT_MD
 			)),
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 			(r'(implicit)(\s+)(view)\b', bygroups(Keyword.Declaration, Whitespace, Keyword.Declaration), 'viewHeader'),
@@ -81,21 +81,21 @@ class MMTLexer(RegexLexer):
 			(r'\/\/.*?❙', Comment.Multiline),
 
 			# Special declarations
-			(r'(include)(\s+)([^❙]+)(❙)', bygroups(Keyword.Namespace, Whitespace, String, Punctuation)),
+			(r'(include)(\s+)([^❙]+)(❙)', bygroups(Keyword.Namespace, Whitespace, String, Token.MMT_DD)),
 			(r'(constant)(\s+)([^\s:❘❙]+)', bygroups(Keyword.Declaration, Whitespace, Name.Constant), 'constantDeclaration'),
-			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, String, Whitespace, Punctuation)),
+			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, String, Whitespace, Token.MMT_DD)),
 
 			# Nested theories
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 
 			# Markdown-style header comments
-			(r'(#+)([^❙]+)(❙)', bygroups(String.Doc, String.Doc, Punctuation)),
+			(r'(#+)([^❙]+)(❙)', bygroups(String.Doc, String.Doc, Token.MMT_DD)),
 
 			# Constant declarations (only if nothing else applied!)
 			(r'[^\s:❘❙❚]+', Name.Constant, 'constantDeclaration'),
 
 			# The end
-			(r'❚', Punctuation, '#pop:2') # Jump two levels above the theoryHeader or viewHeader
+			(r'❚', Token.MMT_MD, '#pop:2') # Jump two levels above the theoryHeader or viewHeader
 		],
 		'constantDeclaration': [
 			(r'\s', Whitespace),
@@ -105,8 +105,8 @@ class MMTLexer(RegexLexer):
 			(r'(@)([^❘❙]+)', bygroups(Punctuation, Name.Constant)),
 			(r'role\b', Keyword, 'expression'),
 			(r'(\/\/.*?)(?=❘|❙)', bygroups(Comment.Multiline, None)),
-			(r'❘', Punctuation),
-			(r'❙', Punctuation, '#pop')
+			(r'❘', Token.MMT_OD),
+			(r'❙', Token.MMT_DD, '#pop')
 		],
 		'notationExpression': [
 			# Lexing rule for notations specifying precedence
