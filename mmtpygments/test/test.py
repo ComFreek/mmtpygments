@@ -21,6 +21,7 @@ import sys
 # Add parent directory such that we can import from mmt_lexer
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from mmt_lexer import MMTLexer
+from mmt_style import MMTDefaultStyle
 
 def generate_index_file(out_statuses, base_path, amalgamation_filename, index_file):
 	"""Generate index file linking to all rendered HTML files.
@@ -109,8 +110,8 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 	"""
 
 	lexer = MMTLexer(encoding = "utf-8")
-	full_html_formatter = HtmlFormatter(full = True, encoding = "utf-8")
-	snippet_html_formatter = HtmlFormatter(full = False, encoding = "utf-8")
+	full_html_formatter = HtmlFormatter(full = True, encoding = "utf-8", style = MMTDefaultStyle)
+	snippet_html_formatter = HtmlFormatter(full = False, encoding = "utf-8", style = MMTDefaultStyle)
 
 	amalgamation_file.write(b"""
 <!doctype html>
