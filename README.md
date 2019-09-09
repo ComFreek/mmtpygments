@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/ComFreek/mmt-pygments-lexer.svg?branch=master)](https://travis-ci.org/ComFreek/mmt-pygments-lexer)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/32b61ca59aba4a79ae4ab5582f210572)](https://app.codacy.com/app/ComFreek/mmt-pygments-lexer?utm_source=github.com&utm_medium=referral&utm_content=ComFreek/mmt-pygments-lexer&utm_campaign=Badge_Grade_Dashboard)
-![GitHub License](https://img.shields.io/github/license/ComFreek/mmt-pygments-lexer.svg)
+[![Build Status](https://travis-ci.org/ComFreek/mmtpygments.svg?branch=master)](https://travis-ci.org/ComFreek/mmtpygments)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/32b61ca59aba4a79ae4ab5582f210572)](https://app.codacy.com/app/ComFreek/mmtpygments?utm_source=github.com&utm_medium=referral&utm_content=ComFreek/mmtpygments&utm_campaign=Badge_Grade_Dashboard)
+![GitHub License](https://img.shields.io/github/license/ComFreek/mmtpygments.svg)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-&nbsp;&nbsp; | [GitHub Repo](https://github.com/ComFreek/mmt-pygments-lexer) | [Collection of rendered codes](https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html)
+&nbsp;&nbsp; | [GitHub Repo](https://github.com/ComFreek/mmtpygments) | [Collection of rendered codes](https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html)
 
 # mmtpygments: Pygments plugin for MMT surface syntax
 
@@ -12,7 +12,7 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 - a recommended Pygments style for it (`mmtdefault`)
 - and experimentally a Pygments lexer for MMT relational data (`mmtrel`).
 
-**Collection of rendered codes:** [click here](https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html)<br>
+**Collection of rendered codes:** [click here](https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html)<br>
 **Screenshot:**<br>
 ![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/59698193-7523c300-91ef-11e9-8c4b-80ec2d3e4a40.png)
 
@@ -78,7 +78,7 @@ If you tab characters in the MMT source being highlighted and they are shown in 
 
 The lexer is heavily tested on large MMT archives containing a lot of MMT surface syntax. [`test/test.py`](./blob/master/test/test.py) is the main entry point of the test infrastructure. It recursively searches for MMT files in `test/data` and runs the lexer on them and formats them afterwards with Pygment's HtmlFormatter. The rendered versions are written next to the original `*.mmt` file with an `.html` extension. Furthermore, `index.html` and `amalgamation.html` are generated to link and display the results, respectively.
 
-The Travis build automatically runs [`test/test.py`](./blob/master/test/test.py) and deploys the results on the `gh-pages` branch, see <https://comfreek.github.io/mmt-pygments-lexer/> and especially <https://comfreek.github.io/mmt-pygments-lexer/mmtpygments/test/index.html>.
+The Travis build automatically runs [`test/test.py`](./blob/master/test/test.py) and deploys the results on the `gh-pages` branch, see <https://comfreek.github.io/mmtpygments/> and especially <https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html>.
 
 ## Development
 
