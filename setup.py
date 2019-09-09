@@ -1,17 +1,23 @@
-"""
-Pygments plugin for MMT surface syntax (lexer & style)
-"""
 from setuptools import setup, find_packages
+import pypandoc
 
-with open('README.md', 'r', encoding='utf-8') as readme_file:
+# Open readme with original (i.e. LF) newlines
+# to prevent the all too common "`long_description_content_type` missing"
+# bug (https://github.com/pypa/twine/issues/454)
+with open('README.md', 'r', newline='', encoding='utf-8') as readme_file:
 	long_description = readme_file.read()
+	long_description_content_type = 'text/markdown'
 
 setup(
 	name = 'mmtpygments',
 	version = '0.1.0',
-	description = __doc__,
+
+	# This description field must not contain any newline characters
+	# Otherwise, the all too common "`long_description_content_type` missing"
+	# bug will appear (https://github.com/pypa/twine/issues/454)
+	description = 'Pygments plugin for MMT surface syntax (lexer & style)',
 	long_description = long_description,
-	long_description_content_type = 'text/markdown',
+	long_description_content_type = long_description_content_type,
 	author = 'ComFreek',
 	maintainer = 'ComFreek',
 	maintainer_email = 'comfreek@outlook.com',
@@ -21,10 +27,13 @@ setup(
 		'Intended Audience :: Science/Research',
 		'License :: OSI Approved :: ISC License (ISCL)',
 		'Operating System :: OS Independent',
-		'Programming Language :: Python'
+		'Programming Language :: Python',
 		'Topic :: Documentation',
-		'Topic :: Multimedia :: Graphics :: Presentation'
+		'Topic :: Multimedia :: Graphics :: Presentation',
+		'Programming Language :: Python :: 3.6',
+		'Programming Language :: Python :: 3.7',
 	],
+	keywords = 'pygments highlighting mmt minted',
 	python_requires = '>=3.6',
 	url = 'https://github.com/ComFreek/mmtpygments',
 	author_email = 'comfreek@outlook.com',
