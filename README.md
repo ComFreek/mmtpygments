@@ -32,12 +32,36 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 [minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments as the backend.
 
 ```tex
-% You MUST USE XeLaTeX (or any other LaTeX-derivative which supports Unicode)
+% !TEX TS-program = latexmk -xelatex -shell-escape -silent -latexoption="-synctex=1 -8bit" %
+
+% ^^^ This is the build command. Install latexmk if you don't have it already.
+%     You may choose an alternative LaTeX derivative, e.g. LuaLaTeX, but be warned that it must support Unicode!
+%
+%     Let your IDE run this build command (or run it manually) in an "PATH environment", where
+%       (1) `python` is available as a command and
+%       (2) you installed the Pip packages `pygments` and `mmtpygments`.
+%
+%     The easiest way is to just install Python on your computer and run `pip install pygments mmtpygments`.
+%
+%     A better way would be to
+%       (1) install Python on your computer,
+%       (2) run `pip install pipenv`,
+%       (3) and then in your directory for this TeX document run:
+%         (3.1) `pipenv install pygments mmtpygments`
+%         (3.2) `pipenv shell`
+%
+%     Now start the build command or your IDE from this very shell. This way, you don't clutter
+%     your whole PC with the Pip packages *and* more importantly, you document the Pip package
+%     versions in the `Pipfile.lock` file generated in step (2.1).
+
+
+\documentclass{article}
+
 \usepackage{fontspec}
 
 % Download GNU Unifont from http://unifoundry.com/unifont/index.html
-% And save it, say, as "fonts/unifont-12.1.02.ttf"
-\newfontfamily\unifont{unifont-12.1.02.ttf}[Path=./fonts/,NFSSFamily=unifont]
+% And save it, say, as "fonts/unifont-12.1.03.ttf"
+\newfontfamily\unifont{unifont-12.1.03.ttf}[Path=./fonts/,NFSSFamily=unifont]
 
 % Disable caching for debugging purposes (increases compilation times!)
 \usepackage[cache=false]{minted}
@@ -52,7 +76,7 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 \begin{document}
 	% Variant 1: Code given in LaTeX, rendered in display mode
 	\begin{mmtcode}
-		theory MyTheory = c : type ❘ # abc ❙❚
+theory MyTheory = c : type ❘ # abc ❙❚
 	\end{mmtcode}
 
 	% Variant 2: Code given in LaTeX, rendered inline
@@ -60,7 +84,7 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 	\mmtinline/theory MyTheory = c : type ❘ # abc ❙❚/
 
 	% Variant 3: Code given externally in file, rendered in display mode
-	\mmtfile{your-mmt-file.mmt}
+	% \mmtfile{your-mmt-file.mmt}
 \end{document}
 ```
 
