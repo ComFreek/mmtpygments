@@ -74,15 +74,41 @@ If you tab characters in the MMT source being highlighted and they are shown in 
 
 ![image](https://user-images.githubusercontent.com/1827709/59755955-23c81200-9289-11e9-92c5-1659b60d03d1.png)
 
-## Testing
+## Development
 
-The lexer is heavily tested on large MMT archives containing a lot of MMT surface syntax. [`test/test.py`](./blob/master/test/test.py) is the main entry point of the test infrastructure. It recursively searches for MMT files in `test/data` and runs the lexer on them and formats them afterwards with Pygment's HtmlFormatter. The rendered versions are written next to the original `*.mmt` file with an `.html` extension. Furthermore, `index.html` and `amalgamation.html` are generated to link and display the results, respectively.
+1. Install [pipenv](https://github.com/pypa/pipenv), which provides a consistent Python, pip and package environment locked in the committed `Pipfile` and `Pipfile.lock` files.
+2. `git submodule init`
+3. `git submodule update`
 
-The Travis build automatically runs [`test/test.py`](./blob/master/test/test.py) and deploys the results on the `gh-pages` branch, see <https://comfreek.github.io/mmtpygments/> and especially <https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html>.
+### Testing
+
+1. `cd mmtpygments/test`
+2. `pipenv run python test.py ./` (returns non-zero exit code on failure)
+3. Open `index.html` in a browser to see failures visually (red rectangles).
+
+This [`test.py`](mmtpygments/test/test.py) runs the lexer on large MMT archives containing a lot of MMT surface syntax. It recursively searches for MMT files in `mmtpygments/test/data`, on which it then runs the provided lexer and Pygment's HtmlFormatter. The rendered versions are written next to the original `*.mmt` files with an `.html` extension. Furthermore, `index.html` and `amalgamation.html` are generated to link and display the results, respectively.
+
+The Travis build automatically runs [`test.py`](mmtpygments/test/test.py) and deploys the results on the `gh-pages` branch, see <https://comfreek.github.io/mmtpygments/> and especially <https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html>.
 
 ## Development
 
-For tinkering and testing the lexer, it is recommended to employ the same testing infrastructure as described above. Even though the Travis build fails on lexing error, [`test/test.py`](./blob/master/test/test.py) actually doesn't -- it just returns a non-zero exit code. In fact, it even generates the HTML renderings with red rectangles around lexing errors. Hence, while tinkering with the lexer, just regularly run [`test/test.py`](./blob/master/test/test.py) and look at the `index.html` locally in your browser to see any errors.
+For tinkering and testing the lexer, it is recommended to employ the same testing infrastructure as described above. Even though the Travis build fails on lexing error, [`test.py`](mmtpygments/test/test.py) actually doesn't -- it just returns a non-zero exit code. In fact, it even generates the HTML renderings with red rectangles around lexing errors. Hence, while tinkering with the lexer, just regularly run [`test.py`](mmtpygments/test/test.py) and look at the `index.html` locally in your browser to see any errors.
+
+## Publishing
+
+```bash
+# Packaging
+$ pipenv run python setup.py sdist bdist_wheel
+
+# Checking if packages are okay (PyPi server will do the same)
+$ pipenv run twine check dist/*
+
+# Upload to Test PyPi repository
+$ pipenv run twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+# Upload to real PyPi repository
+$ pipenv run twine upload dist/*
+```
 
 ## For future maintainers: necessary changes in case of repository movement
 
@@ -90,4 +116,3 @@ In case you wish to host this repository or a fork thereof somewhere else, these
 
   - `README.md`: Change all links to deployed `gh-pages` branch render results accordingly.
   - `.travis.yml`: Change the base path with which `python test.py` is run to your hosting URI.
-
