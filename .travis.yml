@@ -33,14 +33,11 @@ deploy:
     target_branch: gh-pages
 
   - provider: pypi
-    # Deploy to PyPI from tagged commits on either master branch or version tags
-    # (in the latter case the branch name from Travis CI's POV is the tag name then!)
-    # See https://docs.travis-ci.com/user/deployment/pypi/
+    # Deploy to PyPI from tagged commits 
+    # See https://docs.travis-ci.com/user/deployment/pypi/,
     # https://stackoverflow.com/questions/30156581/travis-ci-skipping-deployment-although-commit-is-tagged
     on:
-      only:
-        - master
-        - /v\d+.*/
+      all_branches: true
       tags: true
       skip_existing: true
     user: "__token__"
