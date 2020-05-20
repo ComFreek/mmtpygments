@@ -30,7 +30,8 @@ before_deploy:
 
 deploy:
   - provider: pages
-    github_token: $GITHUB_PAGES_DEPLOYMENT_TOKEN
+    strategy: git
+    token: $GITHUB_PAGES_DEPLOYMENT_TOKEN
     on:
       branch: master
     target_branch: gh-pages
@@ -40,16 +41,15 @@ deploy:
     # (in the latter case the branch name from Travis CI's POV is the tag name then!)
     # See https://docs.travis-ci.com/user/deployment/pypi/ and
     # https://stackoverflow.com/questions/30156581/travis-ci-skipping-deployment-although-commit-is-tagged
-    
-    skip_cleanup: true
+
     on:
-      only:
+      branch:
         - master
         - /v\d+.*/
-      tags: true
-    keep_history: true
+    tags: true
+    # keep_history: true, only exists in upcoming dlp2 on Travis CI
     skip_cleanup: true # will soon be deprecated by Travis CI in favor of `cleanup: false` (being the default)
     skip_existing: true
-    user: "__token__"
+    username: "__token__"
     password:
       secure: "DeNZhB8TZ4wQzKk87yWqijz7NW790r+oIX8gOPMyncPTDbtUetlktQKUKXJB3aQVJDkDyLJwIUqZEz0NGDRBcLakWnT1METXBLtPoHf8mXfcs6J40toS7yztnhhNgQqrykntlUWXCqMDgHMUiVdfEtJGb07rpM8iYvw2FCxXHVFapTVswjwOr9jB3D7/HM0hWWemn+BLa11BnUZ8UMjsLomd32khd3zfKMo2b6pB++Dv9A7B9rnBi0PJGhTejfTKlauo3Cd4QXcdzlF0vRp4AjOvOXzXBH6BlLeKl8mblmYGACfCUelK+mgwryTLl2GSwP2QQaBf6J8ZOh2wmk8sb50uZXLcoYQiIcJFVfB2ePPlnCvKPtQihVHw7dLsGg4EOpB0IWJ2plvYZ6rvMiKiNw6EgPQtU11H+wISFsQ9Lk0q75IJERcBMYUDbycfa6PlFyGBxfY7bKeXlfOvpzxl+lqKciAxZkk1p6LotWpuW2fs94eAX+3U752me+z3TP7/QkJrvh7onmhBFHTVaqmaHSBpuVq3nNa7/pkmY3Le56mI9vv1hGEk3mx2QcJxECcubRfcZ11i/6TuDkgRz1/YGqCzLzqu91650gjNmfhGRj3Zt1oJK/w+ZMDwgFHGOCDKPREFNoivA5hLqk5k9wQ8ahEmU2DPvlph+xua3LNXUlc="
