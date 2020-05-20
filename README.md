@@ -121,9 +121,13 @@ For tinkering and testing the lexer, it is recommended to employ the same testin
 
 ## Publishing
 
-Publishing is done automatically via [.travis.yml](./.travis.yml) upon tagged commits on the master branch.
+Publishing is done automatically via [.travis.yml](./.travis.yml) upon tagged commits on the master branch. For that do
 
-If you really have to manually publish a version for whatever reason, do the following:
+1. Locally commit all your changes.
+2. Create a new version tag: `git tag -a vx.y.z -m "Version x.y.z, see CHANGELOG.md"` (the tag name needs to start with `v` and a digit for Travis CI to pick it up, see [`.travis.yml`](./.travis.yml))
+3. Push the commit and the tag: `git push && git push --tags`
+
+**Not recommended:** If you really have to publish a version manually for whatever reason, do the following:
 
 ```bash
 # Packaging
