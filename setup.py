@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import pypandoc
 
 # Open readme with original (i.e. LF) newlines
 # to prevent the all too common "`long_description_content_type` missing"
