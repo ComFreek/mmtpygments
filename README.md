@@ -14,7 +14,7 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 
 **Collection of rendered codes:** [click here](https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html)<br>
 **Screenshot:** (click for live version)<br>
-[![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/82431045-74924d00-9a8e-11ea-81b9-86d3812ede9b.png)](https://comfreek.github.io/mmtpygments/mmtpygments/test/data/readme-showoff-example.mmt.html)
+[![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/82438710-c7253680-9a99-11ea-97c9-8da8f715ac14.png)](https://comfreek.github.io/mmtpygments/mmtpygments/test/data/readme-showoff-example.mmt.html)
 
 ## Installation
 
