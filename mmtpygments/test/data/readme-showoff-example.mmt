@@ -1,0 +1,24 @@
+namespace http://github.com/ComFreek/mmtpygments ❚
+meta ?purpose "screenshot for readme" ❚
+
+theory Lists =
+	list: type ⟶ type ❙
+
+	nil:    {A: type} list A                ❘ # [] %I1 prec 150 ❙
+	cons:   {A: type} A ⟶ list A ⟶ list A ❘ # 2 :: 3 prec 100 ❙
+	append: {A: type} A ⟶ list A ⟶ list A ❘ # 3 ;; 2 prec 80  ❙
+	
+	concat: {A: type} list A ⟶ list A ⟶ list A
+		❘ meta ?purpose "for concatenation
+		❘ // comment: choose a better notation?
+		❘ # 2 ::: 3 prec 50
+	❙
+❚
+
+view reverse: ?Lists -> ?Lists =
+	list = list ❙
+	nil = nil ❙
+	cons = [A, a, l] l ;; a ❘ meta ?coolness "beyond imagination" ❙
+	append = [A, a, l] a :: l ❙
+	concat = ??? ❘ // missing ❙
+❚
