@@ -18,42 +18,42 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 
 ## Installation
 
-### Via Pip (recommended)
+- via Pip (easy)
 
-1. `pip install Pygments mmtpygments`
-2. Use as you wish with Pygments, e.g. run on CLI:
+    ```
+    pip install Pygments mmtpygments
+    ```
 
-   `pygmentize -f html -l mmt -O full,style=mmtdefault -o test.html test.mmt`
+- via `pipenv` or other Python package managers superior to Pip:
 
-   This tells Pygments to use the HTML formatter (`-f`), the MMT lexer (`-l`) and to output a full HTML file using the `mmtdefault` style (`-O`) rendered of `test.mmt` into `test.html` (`-o`).
+    1. Run `pipenv install pygments mmtpygments` in your project directory, e.g. containing the LaTeX files in which you'd like to use this
+	2. Remember to use `mmtpygments` from now on always in that virtual environment context: run your intended command within `pipenv shell`
 
-## Usage in LaTeX with minted
+	   For example, if you'd like to use this in LaTeX and use TeXStudio as an IDE, start TeXStudio from within that shell.
+	   
+    This way, you don't clutter your whole PC with the Pip packages *and* more importantly, you document the Pip package versions in the `Pipfile.lock` file generated in step (2.1).
+
+## Usage
+
+### CLI
+
+```
+pygmentize -f html -l mmt -O full,style=mmtdefault -o test.html test.mmt
+```
+
+This tells Pygments to use the HTML formatter (`-f`), the MMT lexer (`-l`) and to output a full HTML file using the `mmtdefault` style (`-O`) rendered of `test.mmt` into `test.html` (`-o`).
+
+
+### LaTeX (with minted)
 
 [minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments as the backend.
 
 ```tex
+% !TeX encoding = UTF-8
 % !TEX TS-program = latexmk -xelatex -shell-escape -silent -latexoption="-synctex=1 -8bit" %
-
+%
 % ^^^ This is the build command. Install latexmk if you don't have it already.
 %     You may choose an alternative LaTeX derivative, e.g. LuaLaTeX, but be warned that it must support Unicode!
-%
-%     Let your IDE run this build command (or run it manually) in an "PATH environment", where
-%       (1) `python` is available as a command and
-%       (2) you installed the Pip packages `pygments` and `mmtpygments`.
-%
-%     The easiest way is to just install Python on your computer and run `pip install pygments mmtpygments`.
-%
-%     A better way would be to
-%       (1) install Python on your computer,
-%       (2) run `pip install pipenv`,
-%       (3) and then in your directory for this TeX document run:
-%         (3.1) `pipenv install pygments mmtpygments`
-%         (3.2) `pipenv shell`
-%
-%     Now start the build command or your IDE from this very shell. This way, you don't clutter
-%     your whole PC with the Pip packages *and* more importantly, you document the Pip package
-%     versions in the `Pipfile.lock` file generated in step (2.1).
-
 
 \documentclass{article}
 
@@ -65,9 +65,7 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 
 % Disable caching for debugging purposes (increases compilation times!)
 \usepackage[cache=false]{minted}
-\setminted{
-	fontfamily=unifont
-}
+\setminted{fontfamily=unifont,tabsize=2,breaklines=true}
 
 \newminted[mmtcode]{mmt}{}
 \newmintinline[mmtinline]{mmt}{}
@@ -115,7 +113,7 @@ This [`test.py`](mmtpygments/test/test.py) runs the lexer on large MMT archives 
 
 The Travis build automatically runs [`test.py`](mmtpygments/test/test.py) and deploys the results on the `gh-pages` branch, see <https://comfreek.github.io/mmtpygments/> and especially <https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html>.
 
-## Development
+### Dev Workflow
 
 For tinkering and testing the lexer, it is recommended to employ the same testing infrastructure as described above. Even though the Travis build fails on lexing error, [`test.py`](mmtpygments/test/test.py) actually doesn't -- it just returns a non-zero exit code. In fact, it even generates the HTML renderings with red rectangles around lexing errors. Hence, while tinkering with the lexer, just regularly run [`test.py`](mmtpygments/test/test.py) and look at the `index.html` locally in your browser to see any errors.
 
