@@ -6,17 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.3] - 2020-05-20
+## [0.3.1], [0.3.2], [0.3.3], [0.3.4], [0.3.5], [0.3.6] - 2020-05-20
 
-Just a version bump for Travis CI to auto-deploy to PyPI.
-
-## [0.3.2] - 2020-05-20
-
-Just a version bump for Travis CI to auto-deploy to PyPI.
-
-## [0.3.1] - 2020-05-20
-
-Just a version bump for Travis CI to auto-deploy to PyPI.
+Just version bumps to retrigger faulty Travis CI configurations to auto-deploy to PyPI.
 
 ## [0.3.0] - 2020-05-20
 ### Added
