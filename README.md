@@ -121,6 +121,10 @@ For tinkering and testing the lexer, it is recommended to employ the same testin
 
 ## Publishing
 
+Publishing is done automatically via [.travis.yml](./.travis.yml) upon tagged commits on the master branch.
+
+If you really have to manually publish a version for whatever reason, do the following:
+
 ```bash
 # Packaging
 $ pipenv run python setup.py sdist bdist_wheel
@@ -139,5 +143,7 @@ $ pipenv run twine upload dist/*
 
 In case you wish to host this repository or a fork thereof somewhere else, these are the places where you have to make changes:
 
-  - `README.md`: Change all links to deployed `gh-pages` branch render results accordingly.
-  - `.travis.yml`: Change the base path with which `python test.py` is run to your hosting URI.
+  - `README.md`: Change all links referencing anything under `https://ComFreek.github.io/mmtpygments` to the URI where you deploy your things.
+  - `.travis.yml`:
+    - Change the base path with which `python test.py` is run to your hosting URI.
+    - Change the secret value in under deploy/pypi to another PyPI token under which you are able to publish PyPI packages.
