@@ -36,7 +36,6 @@ deploy:
       branch: master
     skip_cleanup: true # will soon be deprecated by Travis CI in favor of `cleanup: false` (being the default)
     target_branch: gh-pages
-
   - provider: pypi
     # Deploy to PyPI from commits on either master branch or version tags
     # (in the latter case the branch name from Travis CI's POV is the tag name then!)
@@ -44,11 +43,8 @@ deploy:
     # https://stackoverflow.com/questions/30156581/travis-ci-skipping-deployment-although-commit-is-tagged
 
     on:
-      branch:
-        only:
-          - master
-          - /v\d+.*/
-    tags: false # also deploy from non-tagged commits
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(master|v\d+.*)$
     # keep_history: true, only exists in upcoming dlp2 on Travis CI
     skip_cleanup: true # will soon be deprecated by Travis CI in favor of `cleanup: false` (being the default)
     skip_existing: true
