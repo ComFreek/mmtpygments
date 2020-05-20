@@ -101,8 +101,9 @@ If you tab characters in the MMT source being highlighted and they are shown in 
 ## Development
 
 1. Install [pipenv](https://github.com/pypa/pipenv), which provides a consistent Python, pip and package environment locked in the committed `Pipfile` and `Pipfile.lock` files.
-2. `git submodule init`
-3. `git submodule update`
+2. `pipenv install`
+3. `git submodule init`
+4. `git submodule update`
 
 ### Testing
 
