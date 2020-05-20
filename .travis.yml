@@ -33,10 +33,9 @@ deploy:
     target_branch: gh-pages
 
   - provider: pypi
-    # Deploy to PyPI from tagged commits on master branch
+    # Deploy to PyPI from tagged commits
     # See https://docs.travis-ci.com/user/deployment/pypi/
     on:
-      branch: master
       tags: true
       skip_existing: true
     user: "__token__"
