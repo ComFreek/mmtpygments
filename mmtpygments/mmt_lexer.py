@@ -13,8 +13,8 @@
 import re
 
 from pygments.lexer import RegexLexer, bygroups
-from pygments.token import Comment, Keyword, Name, Number, \
-	Punctuation, String, Token, Whitespace
+from pygments.token import Comment, Keyword, Literal, \
+	Name, Number, Punctuation, String, Token, Whitespace
 
 __all__ = ['MMTLexer']
 
@@ -35,17 +35,36 @@ class MMTLexer(RegexLexer):
 	tokens = {
 		'root': [
 			(r'\s', Whitespace),
+			(r'(meta)(?= )', Keyword.Declaration, ('expectMD', 'metaAnnotation')),
 			(r'(namespace)(\s+)(\S+)(\s*)(❚)', bygroups(
-				Keyword.Namespace, Whitespace, String, Whitespace, Token.MMT_MD
+				Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
 			(r'(import)(\s+)(\S+)(\s+)(\S+)(\s*)(❚)', bygroups(
-				Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, String, Whitespace, Token.MMT_MD
+				Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 			(r'(implicit)(\s+)(view)\b', bygroups(Keyword.Declaration, Whitespace, Keyword.Declaration), 'viewHeader'),
 			(r'(view)\b', Keyword.Declaration, 'viewHeader'),
 			(r'\/T .*?❚', Comment.Multiline),
 			(r'\/\/.*?❚', Comment.Multiline)
+		],
+		'expectMD': [
+			(r'(\s*)(❚)', bygroups(Whitespace, Token.MMT_MD), '#pop')
+		],
+		'expectDD': [
+			(r'(\s*)(❙)', bygroups(Whitespace, Token.MMT_DD), '#pop')
+		],
+		'expectOD': [
+			(r'(\s*)(❘)', bygroups(Whitespace, Token.MMT_OD), '#pop')
+		],
+		'metaAnnotation': [
+			(r'(\s*)(.*?)(\s+)', bygroups(Whitespace, Name.Constant, Whitespace), 'metaAnnotationValue'),
+		],
+		'metaAnnotationValue': [
+			# either URI
+			(r'\?[^ ❘❙❚]*', Literal.URI, '#pop:2'),
+			# or arbitrary expression
+			(r'[^❘❙❚]*', Token.MMT_ObjectExpression, '#pop:2')
 		],
 		'theoryHeader': [
 			(r'\s', Whitespace),
@@ -80,10 +99,13 @@ class MMTLexer(RegexLexer):
 			(r'\/T .*?❙', Comment.Multiline),
 			(r'\/\/.*?❙', Comment.Multiline),
 
+			# Meta Annotations
+			(r'(meta)(?= )', Keyword.Declaration, ('expectDD', 'metaAnnotation')),
+
 			# Special declarations
-			(r'(include)(\s+)([^❙]+)(❙)', bygroups(Keyword.Namespace, Whitespace, String, Token.MMT_DD)),
+			(r'(include)(\s+)([^❙]+)(❙)', bygroups(Keyword.Namespace, Whitespace, Literal.URI, Token.MMT_DD)),
 			(r'(constant)(\s+)([^\s:❘❙]+)', bygroups(Keyword.Declaration, Whitespace, Name.Constant), 'constantDeclaration'),
-			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, String, Whitespace, Token.MMT_DD)),
+			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 
 			# Nested theories
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
@@ -104,21 +126,39 @@ class MMTLexer(RegexLexer):
 			(r'#', Punctuation, 'notationExpression'),
 			(r'(@)([^❘❙]+)', bygroups(Punctuation, Name.Constant)),
 			(r'role\b', Keyword, 'expression'),
+			(r'(meta)(?= )', Keyword.Declaration, 'metaAnnotation'),
 			(r'(\/\/.*?)(?=❘|❙)', bygroups(Comment.Multiline, None)),
 			(r'❘', Token.MMT_OD),
 			(r'❙', Token.MMT_DD, '#pop')
 		],
 		'notationExpression': [
-			# Lexing rule for notations specifying precedence
-			(r'([^❘❙]+)(\bprec)(\s+)(-?\d+)', bygroups(String, Keyword, Whitespace, Number.Integer), '#pop'),
+			# Sample constant with notation expression:
+			#
+			# coprodmatch # 2 match V1 . 3|… to 4 %I5 prec -9000❙
+			#              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ notation
+			#
+			# Note that | is a regular pipe, not an MMT delimiter!
+			#
+			(r'\s+', Whitespace),
 
-			# And for notations without
-			# (Theoretically, both could be merged into one regex, however I couldn't figure out bygroups usage in that case.)
-			(r'([^❘❙]+)', bygroups(String), '#pop')
+			# Specifiers for argument positions and implicit arguments
+			(r'\d+', String.Interpol),
+			(r'%?((I|V|L)\d+[Td]*)(_(I|L)\d+[Td]*)*', String.Interpol), # also supports %L1_L2
+
+			# Specifier for arglists
+			(r'…', String.Interpol),
+
+			# Specifier for precedence specifier (e.g. `pred 1234`)
+			(r'(\bprec)(\s+)(-?\d+)', bygroups(Keyword, Whitespace, Number.Integer), '#pop'),
+
+			# Finally the actual notation string (e.g. "match", ".", "|", "to" in the example above)
+			(r'([^\s\d…❘❙]+)', String.Symbol),
+
+			(r'(?=[❘❙])', Whitespace, '#pop')
 		],
 		'expression': [
 			(r'\s', Whitespace),
-			(r'[^❘❙]+', String, '#pop')
+			(r'[^❘❙]+', Token.MMT_ObjectExpression, '#pop')
 		],
 	}
 

@@ -1,0 +1,1 @@
+Directory of MMT files used for testing the lexer. See the project's overall README for details on testing.

@@ -1,0 +1,18 @@
+namespace http://github.com/ComFreek/mmtpygments/meta-annotations ❚
+
+meta key "value" ❚
+meta otherKey ?uri ❚
+
+theory theory =
+	meta key "value" ❙
+	meta otherKey ?uri❙
+	
+	c: E ❘ meta key "value" ❘ meta otherKey ?uri ❙
+❚
+
+view v: ?S -> ?T =
+	meta key "value" ❙
+	meta otherKey ?uri❙
+
+	c = d❘ meta key "value" ❘ meta otherKey ?uri ❙
+❚
