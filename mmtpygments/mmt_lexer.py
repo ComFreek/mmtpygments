@@ -127,7 +127,7 @@ class MMTLexer(RegexLexer):
 			(r'(@)([^❘❙]+)', bygroups(Punctuation, Name.Constant)),
 			(r'role\b', Keyword, 'expression'),
 			(r'(meta)(?= )', Keyword.Declaration, 'metaAnnotation'),
-			(r'(\/\/.*?)(?=❘|❙)', bygroups(Comment.Multiline, None)),
+			(r'\/\/[^❘❙]*', Comment.Multiline),
 			(r'❘', Token.MMT_OD),
 			(r'❙', Token.MMT_DD, '#pop')
 		],
