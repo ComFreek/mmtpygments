@@ -10,13 +10,27 @@
 	:license: ISC, see LICENSE for details.
 """
 
-import re
+import re, sys
 
-from pygments.lexer import RegexLexer, bygroups
+from pygments.lexer import RegexLexer
 from pygments.token import Comment, Keyword, Literal, \
 	Name, Number, Punctuation, String, Token, Whitespace
 
 __all__ = ['MMTLexer']
+
+IS_CONVERSION_MODE = False
+
+if __name__ == '__main__' and len(sys.argv) == 2 and sys.argv[1] == 'convert':
+	IS_CONVERSION_MODE = True
+
+def bygroups(*bygroup_args):
+	global IS_CONVERSION_MODE
+
+	import pygments.lexer
+	if IS_CONVERSION_MODE:
+		return bygroup_args
+	else:
+		return pygments.lexer.bygroups(*bygroup_args)
 
 class MMTLexer(RegexLexer):
 	"""
@@ -162,19 +176,32 @@ class MMTLexer(RegexLexer):
 		],
 	}
 
+
 # Use this for debugging
 if __name__ == "__main__":
 	import io
 	import sys
 
-	if len(sys.argv) != 2:
-		print("Debugging Interface for MMT's Pygments Lexer")
-		print("Usage: " + sys.argv[0] + " filename-of-MMT-file")
-		print("")
-		print("It will be read in UTF-8 encoding and lexed through our parser.")
-		sys.exit()
+	if len(sys.argv) == 3 and sys.argv[1] == 'debug':
+		test_file = io.open(sys.argv[2], mode="r", encoding="utf-8")
 
-	test_file = io.open(sys.argv[1], mode="r", encoding="utf-8")
+		lexer = MMTLexer()
+		print(list(lexer.get_tokens(test_file.read())))
+	elif len(sys.argv) == 2 and sys.argv[1] == 'convert':
+		from pygments_to_rouge import convert_pygments_regex_lexer
+	
+		with io.open('mmt.rb', mode="w", newline="\n", encoding="utf-8") as ruby_lexer:
+			ruby_lexer.write(convert_pygments_regex_lexer(
+				MMTLexer,
+				rouge_lexer_name = 'MMT',
+				rouge_title = 'mmt',
+				rouge_tag = 'mmt'
+			))
+		print('Successfully converted, see mmt.rb')
+	else:
+		print("Usage\n==========")
+		print(" a) `{} debug filename-of-MMT-file` to debug this Pygments lexer`".format(sys.argv[0]))
+		print("    It will be read in UTF-8 encoding and lexed through our parser.")
+		print(" b) `{} convert` to convert this Pygments lexer to a Rouge lexer".format(sys.argv[0]))
 
-	lexer = MMTLexer()
-	print(list(lexer.get_tokens(test_file.read())))
+		sys.exit(1)
