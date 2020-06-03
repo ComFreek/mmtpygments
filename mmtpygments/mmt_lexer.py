@@ -49,21 +49,26 @@ class MMTLexer(RegexLexer):
 	tokens = {
 		'root': [
 			(r'\s', Whitespace),
+			(r'\/T .*?❚', Comment.Multiline),
+			(r'\/\/.*?❚', Comment.Multiline),
+
+			# Document-level directives
 			(r'(meta)(?= )', Keyword.Declaration, ('expectMD', 'metaAnnotation')),
 			(r'(namespace)(\s+)(\S+?)(\s*)(❚)', bygroups(
 				Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
-			(r'(fixmeta|ref)(\s+)(\S+?)(\s*)(❚)', bygroups(
-				Comment.Preproc, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
-			)),
 			(r'(import)(\s+)(\S+)(\s+)(\S+?)(\s*)(❚)', bygroups(
 				Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
+			(r'(fixmeta|ref)(\s+)(\S+?)(\s*)(❚)', bygroups(
+				Comment.Preproc, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
+			)),
+			(r'diagram\b', Keyword.Declaration, 'diagramHeader'),
+			
+			# Modules (theories, views)
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 			(r'(implicit)(\s+)(view)\b', bygroups(Keyword.Declaration, Whitespace, Keyword.Declaration), 'viewHeader'),
 			(r'(view)\b', Keyword.Declaration, 'viewHeader'),
-			(r'\/T .*?❚', Comment.Multiline),
-			(r'\/\/.*?❚', Comment.Multiline),
 
 			# If nothing before matched, do graceful degradation
 			(r'[^❚]*?❚', Generic.Error)
@@ -120,6 +125,19 @@ class MMTLexer(RegexLexer):
 					Whitespace,
 					Name.Variable,
 			), 'moduleDefiniens')
+		],
+		'diagramHeader': [
+			(r'\s', Whitespace),
+			# First try matching with meta theory
+			(r'(\S+)(\s*)(:)(\s*)([^❚=]+)', bygroups(
+				Name.Variable,
+				Whitespace,
+				Punctuation, Whitespace, Name.Variable # the meta part
+			), 'expression'),
+
+			# Then without meta theory
+			(r'[^❚=]+', Name.Variable, 'expression'),
+			(r'❚', Token.MMT_MD, '#pop')
 		],
 
 		# Modules subsume both theories and views
@@ -202,13 +220,13 @@ class MMTLexer(RegexLexer):
 			(r'(\bprec)(\s+)(-?\d+)', bygroups(Keyword, Whitespace, Number.Integer), '#pop'),
 
 			# Finally the actual notation string (e.g. "match", ".", "|", "to" in the example above)
-			(r'([^\s\d…❘❙]+)', String.Symbol),
+			(r'([^\s\d…❘❙❚]+)', String.Symbol),
 
-			(r'(?=[❘❙])', Whitespace, '#pop')
+			(r'(?=[❘❙❚])', Whitespace, '#pop')
 		],
 		'expression': [
 			(r'\s', Whitespace),
-			(r'[^❘❙]+', Token.MMT_ObjectExpression, '#pop')
+			(r'[^❘❙❚]+', Token.MMT_ObjectExpression, '#pop')
 		],
 	}
 
