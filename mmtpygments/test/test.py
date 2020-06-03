@@ -10,7 +10,7 @@
 
 import pygments
 from pygments.formatters.html import HtmlFormatter
-from pygments.token import Token
+from pygments.token import Token, Generic
 
 from datetime import datetime
 import glob
@@ -137,6 +137,11 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 	at_least_one_erroneous = False
 	out_statuses = []
 
+	# Tokens that we interpret as signalling a lexer error
+	# Token.Error is Pygment's standard error token whereas Generic.Error
+	# is issued by MMTLexer for graceful degradation
+	error_tokens = [Token.Error, Generic.Error]
+
 	for test_filename in test_files:
 		print("Running test for " + test_filename)
 
@@ -144,7 +149,7 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 		# Indeed, we specified above UTF-8 encoding for the lexer and formatter
 		with io.open(test_filename, mode="rb") as test_file:
 			tokens = list(lexer.get_tokens(test_file.read()))
-			erroneous = any(token is Token.Error for (token, _) in tokens)
+			erroneous = any(token in error_tokens for (token, _) in tokens)
 			at_least_one_erroneous = at_least_one_erroneous or erroneous
 
 			if erroneous:
