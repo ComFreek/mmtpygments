@@ -53,7 +53,7 @@ class MMTLexer(RegexLexer):
 			(r'(namespace)(\s+)(\S+?)(\s*)(❚)', bygroups(
 				Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
-			(r'(fixmeta)(\s+)(\S+?)(\s*)(❚)', bygroups(
+			(r'(fixmeta|ref)(\s+)(\S+?)(\s*)(❚)', bygroups(
 				Comment.Preproc, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
 			(r'(import)(\s+)(\S+)(\s+)(\S+?)(\s*)(❚)', bygroups(
