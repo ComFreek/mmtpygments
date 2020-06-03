@@ -60,7 +60,7 @@ class MMTLexer(RegexLexer):
 			(r'(import)(\s+)(\S+)(\s+)(\S+?)(\s*)(❚)', bygroups(
 				Keyword.Namespace, Whitespace, Name.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
-			(r'(fixmeta|ref)(\s+)(\S+?)(\s*)(❚)', bygroups(
+			(r'(fixmeta|ref|rule)(\s+)(\S+?)(\s*)(❚)', bygroups(
 				Comment.Preproc, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
 			(r'diagram\b', Keyword.Declaration, 'diagramHeader'),
