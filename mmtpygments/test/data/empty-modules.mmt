@@ -1,0 +1,9 @@
+theory EmptyTheory❚
+theory EmptyTheoryWithMeta : ?EmptyTheory❚
+
+view EmptyView : ?EmptyTheory -> ?EmptyTheory❚
+
+theory thy =
+  structure emptyStructure : ?EmptyTheory❚
+  structure emptyStructureWithEq : ?EmptyTheory=❚
+❚

@@ -89,14 +89,27 @@ class MMTLexer(RegexLexer):
 		'theoryHeader': [
 			(r'\s', Whitespace),
 			# First try matching with meta theory
-			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(=)', bygroups(Name.Variable, Whitespace, Punctuation, Whitespace, Name.Variable, Whitespace, Punctuation), 'moduleBody'),
+			(r'(\S+)(\s*)(:)(\s*)([^❚=]+)', bygroups(
+				Name.Variable,
+				Whitespace,
+				Punctuation, Whitespace, Name.Variable # the meta part
+			), 'moduleDefiniens'),
 
 			# Then without meta theory
-			(r'(\S+)(\s*)(=)', bygroups(Name.Variable, Whitespace, Punctuation), 'moduleBody')
+			(r'[^❚=]+', Name.Variable, 'moduleDefiniens')
+		],
+		'moduleDefiniens': [
+			(r'\s', Whitespace),
+			(r'=', Punctuation, 'moduleBody'),
+
+			# The end
+			# jump back to outer container (either root or other module in case of nested modules)
+			# theoryHeader/viewHeader --> outer container
+			(r'❚', Token.MMT_MD, '#pop:2')
 		],
 		'viewHeader': [
 			(r'\s', Whitespace),
-			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)(\S+)(\s*)(=)', bygroups(
+			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)([^❚=]+)', bygroups(
 					Name.Variable,
 					Whitespace,
 					Punctuation,
@@ -106,9 +119,7 @@ class MMTLexer(RegexLexer):
 					Punctuation,
 					Whitespace,
 					Name.Variable,
-					Whitespace,
-					Punctuation
-			), 'moduleBody')
+			), 'moduleDefiniens')
 		],
 
 		# Modules subsume both theories and views
@@ -128,6 +139,9 @@ class MMTLexer(RegexLexer):
 			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 			(r'(realize)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 
+			# Structures
+			(r'(total\s+)?(structure\b)', Keyword, 'theoryHeader'),
+
 			# Nested theories
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 
@@ -140,7 +154,9 @@ class MMTLexer(RegexLexer):
 			(r'[^❚]*?❙', Generic.Error),
 
 			# The end
-			(r'❚', Token.MMT_MD, '#pop:2') # Jump two levels above the theoryHeader or viewHeader
+			# jump back to outer container (either root or other module in case of nested modules)
+			# moduleDefiniens --> theoryHeader/viewHeader --> outer container
+			(r'❚', Token.MMT_MD, '#pop:3')
 		],
 		'constantDeclaration': [
 			(r'\s', Whitespace),
