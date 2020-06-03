@@ -18,7 +18,7 @@ install:
 cache: pip
 
 script:
-  - pushd mmtpygments/test && pipenv run python test.py https://comfreek.github.io/mmtpygments/mmtpygments/test/ && popd
+  - pushd mmtpygments/test ; pipenv run python test.py https://comfreek.github.io/mmtpygments/mmtpygments/test/ ; popd
 
 before_deploy:
   # Prevent auxiliary and other compilation artifacts from the MMT Git submodule archives to be pushed to gh-pages
