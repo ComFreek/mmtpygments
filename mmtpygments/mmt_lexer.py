@@ -13,7 +13,7 @@
 import re, sys
 
 from pygments.lexer import RegexLexer
-from pygments.token import Comment, Keyword, Literal, \
+from pygments.token import Comment, Generic, Keyword, Literal, \
 	Name, Number, Punctuation, String, Token, Whitespace
 
 __all__ = ['MMTLexer']
@@ -63,7 +63,10 @@ class MMTLexer(RegexLexer):
 			(r'(implicit)(\s+)(view)\b', bygroups(Keyword.Declaration, Whitespace, Keyword.Declaration), 'viewHeader'),
 			(r'(view)\b', Keyword.Declaration, 'viewHeader'),
 			(r'\/T .*?❚', Comment.Multiline),
-			(r'\/\/.*?❚', Comment.Multiline)
+			(r'\/\/.*?❚', Comment.Multiline),
+
+			# If nothing before matched, do graceful degradation
+			(r'[^❚]*?❚', Generic.Error)
 		],
 		'expectMD': [
 			(r'(\s*)(❚)', bygroups(Whitespace, Token.MMT_MD), '#pop')
@@ -111,7 +114,7 @@ class MMTLexer(RegexLexer):
 		# Modules subsume both theories and views
 		# Invariant: moduleBody jumps at end two levels up since it assumes a theoryHeader or viewHeader before
 		'moduleBody': [
-		  (r'\s', Whitespace),
+			(r'\s', Whitespace),
 			# Comments
 			(r'\/T .*?❙', Comment.Multiline),
 			(r'\/\/.*?❙', Comment.Multiline),
@@ -133,6 +136,8 @@ class MMTLexer(RegexLexer):
 			# Constant declarations (only if nothing else applied!)
 			(r'[^\s:❘❙❚]+', Name.Constant, 'constantDeclaration'),
 
+			(r'[^❚]*?❙', Generic.Error),
+
 			# The end
 			(r'❚', Token.MMT_MD, '#pop:2') # Jump two levels above the theoryHeader or viewHeader
 		],
@@ -146,7 +151,18 @@ class MMTLexer(RegexLexer):
 			(r'(meta)(?= )', Keyword.Declaration, 'metaAnnotation'),
 			(r'\/\/[^❘❙]*', Comment.Multiline),
 			(r'❘', Token.MMT_OD),
-			(r'❙', Token.MMT_DD, '#pop')
+			(r'❙', Token.MMT_DD, '#pop'),
+
+			# If nothing before matched, do graceful degradation for...
+
+			# - ...unknown structural features that we detect via an equal sign.
+			#
+			#   Note that such structural features contain declaration delimiters (❙)
+			#   themselves and are ended by a module delimiter (❙)!
+			(r'[^❙❚]*?=[^❚]*?❚', Generic.Error, '#pop'),
+
+			# - ... everything else
+			(r'[^❚]*?❙', Generic.Error, '#pop'),
 		],
 		'notationExpression': [
 			# Sample constant with notation expression:
