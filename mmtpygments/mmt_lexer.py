@@ -105,6 +105,8 @@ class MMTLexer(RegexLexer):
 		],
 		'moduleDefiniens': [
 			(r'\s', Whitespace),
+			# structural features use syntax `inductive nat() ❘ = ...`
+			(r'(❘)(\s*)(=)', bygroups(Token.MMT_OD, Whitespace, Punctuation), 'moduleBody'),
 			(r'=', Punctuation, 'moduleBody'),
 
 			# The end
@@ -126,6 +128,32 @@ class MMTLexer(RegexLexer):
 					Name.Variable,
 			), 'moduleDefiniens')
 		],
+
+		# The header of a structural feature.
+		#
+		# For example, in the following sample structural feature use
+		#
+		# `ind_definition f(a: T, b: T) : myIndType(a, b) ❘ = ... ❚`
+		#                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		#
+		# this production matches everything subscripted with ^ and then delegates
+		# to `moduleDefiniens` for further processing.
+		# In turn, `moduleDefiniens` then delegates to `moduleBody`, which finishing its matching,
+		# jumps back 3 levels, i.e., to the state where `structuralFeatureHeader` was pushed.
+		'structuralFeatureHeader': [
+			(r'\s', Whitespace),
+
+			(r'(\S+)(\s*)(\()([^)]*)(\))(\s*)(:)?', bygroups(
+				Name.Variable,
+				Whitespace,
+				Punctuation,
+				Token.MMT_ObjectExpression,
+				Punctuation,
+				Whitespace,
+				Punctuation
+			), ('moduleDefiniens', 'expression'))
+		],
+
 		'diagramHeader': [
 			(r'\s', Whitespace),
 			# First try matching with meta theory
@@ -165,6 +193,9 @@ class MMTLexer(RegexLexer):
 
 			# Markdown-style header comments
 			(r'(#+)([^❙]+)(❙)', bygroups(String.Doc, String.Doc, Token.MMT_DD)),
+
+			# Structural features
+			(r'([^\s:=#❘❙❚]+)(\s+)(?=[^\s:=#❘❙❚]+\()', bygroups(Keyword.Declaration, Whitespace), 'structuralFeatureHeader'),
 
 			# Constant declarations (only if nothing else applied!)
 			# only match the name greedily until a whitespace \s, a typing colon :, a notation expression #,
@@ -228,7 +259,7 @@ class MMTLexer(RegexLexer):
 		],
 		'expression': [
 			(r'\s', Whitespace),
-			(r'[^❘❙❚]+', Token.MMT_ObjectExpression, '#pop')
+			(r'[^❘❙❚]*', Token.MMT_ObjectExpression, '#pop')
 		],
 	}
 
