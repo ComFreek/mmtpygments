@@ -167,7 +167,9 @@ class MMTLexer(RegexLexer):
 			(r'(#+)([^❙]+)(❙)', bygroups(String.Doc, String.Doc, Token.MMT_DD)),
 
 			# Constant declarations (only if nothing else applied!)
-			(r'[^\s:❘❙❚]+', Name.Constant, 'constantDeclaration'),
+			# only match the name greedily until a whitespace \s, a typing colon :, a notation expression #,
+			# or a delimiter appears
+			(r'[^\s:=#❘❙❚]+', Name.Constant, 'constantDeclaration'),
 
 			(r'[^❚]*?❙', Generic.Error),
 
