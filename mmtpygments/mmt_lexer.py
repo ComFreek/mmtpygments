@@ -52,6 +52,9 @@ class MMTLexer(RegexLexer):
 			(r'\/T .*?❚', Comment.Multiline),
 			(r'\/\/.*?❚', Comment.Multiline),
 
+			# (super document)-level directives
+			(r'(document)(\s+)(\S+?)(?=\s+)', bygroups(Keyword.Declaration, Whitespace, Name.Namespace)),
+
 			# Document-level directives
 			(r'(meta)(?= )', Keyword.Declaration, ('expectMD', 'metaAnnotation')),
 			(r'(namespace)(\s+)(\S+?)(\s*)(❚)', bygroups(
@@ -66,7 +69,7 @@ class MMTLexer(RegexLexer):
 			(r'diagram\b', Keyword.Declaration, 'diagramHeader'),
 			
 			# Modules (theories, views)
-			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
+			(r'(theory)\b', Keyword.Declaration, 'theoryHeader'),
 			(r'(implicit)(\s+)(view)\b', bygroups(Keyword.Declaration, Whitespace, Keyword.Declaration), 'viewHeader'),
 			(r'(view)\b', Keyword.Declaration, 'viewHeader'),
 
@@ -95,29 +98,32 @@ class MMTLexer(RegexLexer):
 			(r'\s', Whitespace),
 			# First try matching with meta theory
 			(r'(\S+)(\s*)(:)(\s*)([^❚=]+)', bygroups(
-				Name.Variable,
+				Name.Class,
 				Whitespace,
 				Punctuation, Whitespace, Name.Variable # the meta part
 			), 'moduleDefiniens'),
 
 			# Then without meta theory
-			(r'[^❚=]+', Name.Variable, 'moduleDefiniens')
+			(r'[^❚=]+', Name.Class, 'moduleDefiniens')
 		],
 		'moduleDefiniens': [
 			(r'\s', Whitespace),
-			# structural features use syntax `inductive nat() ❘ = ...`
-			(r'(❘)(\s*)(=)', bygroups(Token.MMT_OD, Whitespace, Punctuation), 'moduleBody'),
+			(r'❘', Token.MMT_OD),
+
+			# usually theories and views do not have notation expressions, but usages of structural features within 
+			# theories might
+			(r'#', Punctuation, 'notationExpression'),
 			(r'=', Punctuation, 'moduleBody'),
 
-			# The end
-			# jump back to outer container (either root or other module in case of nested modules)
-			# theoryHeader/viewHeader --> outer container
-			(r'❚', Token.MMT_MD, '#pop:2')
+			# The case of a module/structural feature with an empty body
+			# => jump back to outer container (either root or other module in case of nested modules)
+			#    theoryHeader or viewHeader or structuralFeatureHeader --> outer container
+			(r'[❙❚]', Token.MMT_MD, '#pop:2')
 		],
 		'viewHeader': [
 			(r'\s', Whitespace),
 			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)([^❚=]+)', bygroups(
-					Name.Variable,
+					Name.Class,
 					Whitespace,
 					Punctuation,
 					Whitespace,
@@ -144,7 +150,7 @@ class MMTLexer(RegexLexer):
 			(r'\s', Whitespace),
 
 			(r'(\S+)(\s*)(\()([^)]*)(\))(\s*)(:)?', bygroups(
-				Name.Variable,
+				Name.Class,
 				Whitespace,
 				Punctuation,
 				Token.MMT_ObjectExpression,
@@ -172,9 +178,15 @@ class MMTLexer(RegexLexer):
 		# Invariant: moduleBody jumps at end two levels up since it assumes a theoryHeader or viewHeader before
 		'moduleBody': [
 			(r'\s', Whitespace),
+			
 			# Comments
-			(r'\/T .*?❙', Comment.Multiline),
-			(r'\/\/.*?❙', Comment.Multiline),
+			# comments in module may also be ended with the module delimiter ❚
+			(r'\/T .*?(❙|❚)', Comment.Multiline),
+			(r'\/\/.*?(❙|❚)', Comment.Multiline),
+
+			# old way of providing meta annotations that are strings
+			# e.g. see https://gl.mathhub.info/MMT/examples/-/blob/206d8ed1eb172d18c26b2f1530681f911ea1af45/source/tutorial/2-algebra.mmt#L21-26
+			(r'(@_description)(\s+)([^❙])+(❙)', bygroups(Keyword, Whitespace, String, Token.MMT_DD)),
 
 			# Meta Annotations
 			(r'(meta)(?= )', Keyword.Declaration, ('expectDD', 'metaAnnotation')),
@@ -214,6 +226,11 @@ class MMTLexer(RegexLexer):
 			(r':', Punctuation, 'expression'),
 			(r'=', Punctuation, 'expression'),
 			(r'#', Punctuation, 'notationExpression'),
+
+			# old way of providing meta annotations that are strings
+			# e.g. see https://gl.mathhub.info/MMT/examples/-/blob/206d8ed1eb172d18c26b2f1530681f911ea1af45/source/tutorial/2-algebra.mmt#L21-26
+			(r'(@_description)(\s+)([^❘❙])+', bygroups(Keyword, Whitespace, String)),
+
 			(r'(@)([^❘❙]+)', bygroups(Punctuation, Name.Constant)),
 			(r'role\b', Keyword, 'expression'),
 			(r'(meta)(?= )', Keyword.Declaration, 'metaAnnotation'),

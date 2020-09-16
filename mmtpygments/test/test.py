@@ -106,7 +106,7 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 		                   It must be opened as a binary file and it will be written to with UTF-8 encoding.
 
 	Return:
-		True on success, False if at least one file could not be lexed error-free.
+		The number of files that failed complete lexing. On success, this is 0.
 	"""
 
 	lexer = MMTLexer(encoding = "utf-8")
@@ -134,7 +134,7 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 	amalgamation_file.write(snippet_html_formatter.get_style_defs().encode("utf-8"))
 	amalgamation_file.write(b"</style>")
 
-	at_least_one_erroneous = False
+	num_failures = 0
 	out_statuses = []
 
 	# Tokens that we interpret as signalling a lexer error
@@ -150,9 +150,9 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 		with io.open(test_filename, mode="rb") as test_file:
 			tokens = list(lexer.get_tokens(test_file.read()))
 			erroneous = any(token in error_tokens for (token, _) in tokens)
-			at_least_one_erroneous = at_least_one_erroneous or erroneous
 
 			if erroneous:
+				num_failures = num_failures + 1
 				sys.stderr.write("  --> Lexing error, see corresponding .html file for details\n")
 
 			out_filename = test_filename + ".html"
@@ -167,7 +167,7 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 
 	amalgamation_file.write(b"</body></html>")
 
-	return at_least_one_erroneous == 0
+	return num_failures
 
 def get_test_files():
 	"""Return an iterable of all test files in sorted order to consider for testing."""
@@ -199,7 +199,7 @@ if __name__ == "__main__":
 	test_files = get_test_files()
 
 	with io.open(INDEX_FILENAME, "w", encoding = "utf-8") as index_file, io.open(AMALGAMATION_FILENAME, "wb") as amalgamation_file:
-		tests_succeeded = run_tests(
+		num_failures = run_tests(
 			test_files = test_files,
 			index_file = index_file,
 			index_file_base_path = INDEX_FILE_BASE_PATH,
@@ -207,6 +207,9 @@ if __name__ == "__main__":
 			amalgamation_filename = AMALGAMATION_FILENAME
 		)
 
-		if not tests_succeeded:
-			sys.stderr.write("\nAt least one error occurred, returning with non-zero exit code.\n")
+		if num_failures is 0:
+			print("\nSuccess! Everything lexed successfully.\n")
+			sys.exit(0)
+		else:
+			sys.stderr.write("\nFailure! %d files failed complete lexing. See HTML output.\n" % num_failures)
 			sys.exit(1)

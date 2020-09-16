@@ -19,3 +19,8 @@
 	url = https://gl.mathhub.info/MMT/LATIN2.git
 	ignore = untracked
 	branch = devel
+[submodule "mmtpygments/test/data/MathHub/MMT/examples"]
+	path = mmtpygments/test/data/MathHub/MMT/examples
+	url = https://gl.mathhub.info/MMT/examples.git
+	branch = devel
+	ignore = untracked
