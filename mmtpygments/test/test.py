@@ -153,7 +153,7 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 
 			if erroneous:
 				num_failures = num_failures + 1
-				sys.stderr.write("  --> Lexing error, see corresponding .html file for details\n")
+				print("  --> Lexing error, see corresponding .html file for details\n")
 
 			out_filename = test_filename + ".html"
 			out_statuses.append({"filename": out_filename, "error": erroneous})
@@ -211,5 +211,6 @@ if __name__ == "__main__":
 			print("\nSuccess! Everything lexed successfully.\n")
 			sys.exit(0)
 		else:
+			sys.stdout.flush() # avoid mixing of stdout and stderr for users' sanity
 			sys.stderr.write("\nFailure! %d files failed complete lexing. See HTML output.\n" % num_failures)
 			sys.exit(1)
