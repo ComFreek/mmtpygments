@@ -193,7 +193,7 @@ class MMTLexer(RegexLexer):
 
 			# Special declarations
 			(r'(include)(\s+)([^❙]+)(❙)', bygroups(Keyword.Namespace, Whitespace, Literal.URI, Token.MMT_DD)),
-			(r'(constant)(\s+)([^\s:❘❙]+)', bygroups(Keyword.Declaration, Whitespace, Name.Constant), 'constantDeclaration'),
+			(r'(constant)(\s+)([^\s:❘❙]+)', bygroups(Keyword.Declaration, Whitespace, Name.Variable.Class), 'constantDeclaration'),
 			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 			(r'(realize)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 
@@ -212,7 +212,7 @@ class MMTLexer(RegexLexer):
 			# Constant declarations (only if nothing else applied!)
 			# only match the name greedily until a whitespace \s, a typing colon :, a notation expression #,
 			# or a delimiter appears
-			(r'[^\s:=#❘❙❚]+', Name.Constant, 'constantDeclaration'),
+			(r'[^\s:=#❘❙❚]+', Name.Variable.Class, 'constantDeclaration'),
 
 			(r'[^❚]*?❙', Generic.Error),
 
