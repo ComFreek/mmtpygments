@@ -54,7 +54,7 @@ class MMTLexer(RegexLexer):
 	name = 'MMT'
 	aliases = ['mmt']
 	filenames = ['*.mmt', '*.mmtx']
-	mimetypes = ['text/plain', 'application/x-mmt']
+	mimetypes = ['application/x-mmt']
 
 	flags = re.DOTALL | re.UNICODE | re.IGNORECASE | re.MULTILINE
 
