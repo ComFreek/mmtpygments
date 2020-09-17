@@ -23,7 +23,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from mmt_lexer import MMTLexer
 from mmt_style import MMTDefaultStyle
 
-def generate_index_file(out_statuses, base_path, amalgamation_filename, index_file):
+def generate_index_file(out_statuses, num_succeeding_lines, num_failing_files, base_path, amalgamation_filename, index_file):
 	"""Generate index file linking to all rendered HTML files.
 
 	Args:
@@ -69,8 +69,10 @@ def generate_index_file(out_statuses, base_path, amalgamation_filename, index_fi
 
 	index_file.write("<h2><a href='" + amalgamation_filename + "'>Amalgamation of Render Results (click)</a></h2>")
 	index_file.write("""
-		<h2>Overview</h2>
-	""")
+		<h2>Overview (highlighted %d lines with success, %d failing files)</h2>
+	""" % (num_succeeding_lines, num_failing_files))
+
+	out_statuses = sorted(out_statuses, key = lambda s : s["error"])
 
 	# TODO Insecure HTML Injection!
 	html_anchors = list((
@@ -93,6 +95,12 @@ def generate_index_file(out_statuses, base_path, amalgamation_filename, index_fi
 		</ul>
 	</body>
 </html>""")
+
+def count_lines(filename):
+	with open(filename, mode="rt", encoding="utf-8") as file:
+		for i, _ in enumerate(file):
+			pass
+		return i + 1
 
 def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, amalgamation_filename):
 	"""Run all tests and produce HTML render results.
@@ -134,7 +142,8 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 	amalgamation_file.write(snippet_html_formatter.get_style_defs().encode("utf-8"))
 	amalgamation_file.write(b"</style>")
 
-	num_failures = 0
+	num_failing_files = 0
+	num_succeeding_lines = 0
 	out_statuses = []
 
 	# Tokens that we interpret as signalling a lexer error
@@ -151,23 +160,32 @@ def run_tests(test_files, index_file, index_file_base_path, amalgamation_file, a
 			tokens = list(lexer.get_tokens(test_file.read()))
 			erroneous = any(token in error_tokens for (token, _) in tokens)
 
-			if erroneous:
-				num_failures = num_failures + 1
-				print("  --> Lexing error, see corresponding .html file for details\n")
+		if erroneous:
+			num_failing_files = num_failing_files + 1
+			print("  --> Lexing error, see corresponding .html file for details\n")
+		else:
+			num_succeeding_lines = num_succeeding_lines + count_lines(test_filename)
 
-			out_filename = test_filename + ".html"
-			out_statuses.append({"filename": out_filename, "error": erroneous})
-			with io.open(out_filename, mode="wb") as out_file:
-				pygments.format(tokens, full_html_formatter, out_file)
-				pygments.format(tokens, snippet_html_formatter, amalgamation_file)
+		out_filename = test_filename + ".html"
+		out_statuses.append({"filename": out_filename, "error": erroneous})
+		with io.open(out_filename, mode="wb") as out_file:
+			pygments.format(tokens, full_html_formatter, out_file)
+			pygments.format(tokens, snippet_html_formatter, amalgamation_file)
 
-			print("  --> Output at " + out_filename)
+		print("  --> Output at " + out_filename)
 
-	generate_index_file(out_statuses, index_file_base_path, amalgamation_filename, index_file)
+	generate_index_file(
+		out_statuses,
+		num_succeeding_lines,
+		num_failing_files,
+		index_file_base_path,
+		amalgamation_filename,
+		index_file
+	)
 
 	amalgamation_file.write(b"</body></html>")
 
-	return num_failures
+	return (num_succeeding_lines, num_failing_files)
 
 def get_test_files():
 	"""Return an iterable of all test files in sorted order to consider for testing."""
@@ -199,7 +217,7 @@ if __name__ == "__main__":
 	test_files = get_test_files()
 
 	with io.open(INDEX_FILENAME, "w", encoding = "utf-8") as index_file, io.open(AMALGAMATION_FILENAME, "wb") as amalgamation_file:
-		num_failures = run_tests(
+		(num_succeeding_lines, num_failures) = run_tests(
 			test_files = test_files,
 			index_file = index_file,
 			index_file_base_path = INDEX_FILE_BASE_PATH,
@@ -208,7 +226,7 @@ if __name__ == "__main__":
 		)
 
 		if num_failures is 0:
-			print("\nSuccess! Everything lexed successfully.\n")
+			print("\nSuccess! %d lines lexed successfully.\n" % (num_succeeding_lines))
 			sys.exit(0)
 		else:
 			sys.stdout.flush() # avoid mixing of stdout and stderr for users' sanity
