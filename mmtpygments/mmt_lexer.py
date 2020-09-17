@@ -211,9 +211,11 @@ class MMTLexer(RegexLexer):
 			(r'\s+', Whitespace),
 			(r'❘', Token.MMT_OD),
 
-			# usually theories and views do not have notation expressions, but usages of structural features within 
+			# Usually theories and views do not have notation expressions, but usages of structural features within 
 			# theories might
-			(r'#', Punctuation, 'notationExpression'),
+			# Also, use #+ since multiple notations could be declared (similarly to constants, where
+			# `c # a ❘ ## b ❘ ### c` for declaring three alternative notations is a thing.)
+			(r'#+', Punctuation, 'notationExpression'),
 			(r'=', Punctuation, 'moduleBody'),
 
 			# The cases of a module/structural feature with an empty body
@@ -323,7 +325,9 @@ class MMTLexer(RegexLexer):
 			(r'\s+', Whitespace),
 			(r':', Punctuation, 'expression'),
 			(r'=', Punctuation, 'expression'),
-			(r'#', Punctuation, 'notationExpression'),
+
+			# Use #+ since a constant can declare multiple notations like this: `c # a ❘ ## b ❘ ### c`
+			(r'#+', Punctuation, 'notationExpression'),
 
 			# old way of providing meta annotations that are strings
 			# e.g. see https://gl.mathhub.info/MMT/examples/-/blob/206d8ed1eb172d18c26b2f1530681f911ea1af45/source/tutorial/2-algebra.mmt#L21-26
