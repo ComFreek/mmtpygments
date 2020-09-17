@@ -9,7 +9,7 @@ with open('README.md', 'r', newline='', encoding='utf-8') as readme_file:
 
 setup(
 	name = 'mmtpygments',
-	version = '0.4.0',
+	version = '1.0.0',
 
 	# This description field must not contain any newline characters
 	# Otherwise, the all too common "`long_description_content_type` missing"
