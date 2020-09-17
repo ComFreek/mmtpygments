@@ -65,10 +65,18 @@ class MMTLexer(RegexLexer):
 			(r'\/\/.*?❚', Comment.Multiline),
 
 			# (super document)-level directives
-			(r'(document)(\s+)(\S+?)(?=\s+)', bygroups(Keyword.Declaration, Whitespace, Name.Namespace)),
+			(r'(document)((?: |\t)+)(\S+?)(?=\s+)', bygroups(Keyword.Declaration, Whitespace, Name.Namespace)),
 
 			# Document-level directives
-			(r'(meta)(?= )', Keyword.Declaration, ('expectMD', 'metaAnnotation')),
+			(r'(meta)(\s+)(\S+)(\s+)([^❚]+)(\s*)(❚)', bygroups(
+				Keyword.Declaration,
+				Whitespace,
+				Literal.URI,
+				Whitespace,
+				Token.MMT_ObjectExpression,
+				Whitespace,
+				Token.MMT_MD
+			)),
 			(r'(namespace)(\s+)(\S+?)(\s*)(❚)', bygroups(
 				Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
@@ -78,12 +86,19 @@ class MMTLexer(RegexLexer):
 			(r'(fixmeta|ref|rule)(\s+)(\S+?)(\s*)(❚)', bygroups(
 				Comment.Preproc, Whitespace, Literal.URI, Whitespace, Token.MMT_MD
 			)),
-			(r'diagram\b', Keyword.Declaration, 'diagramHeader'),
+			(r'(diagram)\b', Keyword.Declaration, 'diagramHeader'),
 			
-			# Modules (theories, views)
+			# Theories
 			(r'(theory)\b', Keyword.Declaration, 'theoryHeader'),
-			(r'(implicit)(\s+)(view)\b', bygroups(Keyword.Declaration, Whitespace, Keyword.Declaration), 'viewHeader'),
-			(r'(view)\b', Keyword.Declaration, 'viewHeader'),
+
+			# Views
+			# (we duplicate the total|implicit subregex here to account for total *and* implicit views
+			#  without imposing an ordering on those keywords)
+			(r'(?:(total|implicit)(\s+))?(?:(total|implicit)(\s+))?(view)\b', bygroups(
+				Keyword, Whitespace,
+				Keyword, Whitespace,
+				Keyword.Declaration
+			), 'viewHeader'),
 
 			# If nothing before matched, do graceful degradation
 			(r'[^❚]*?❚', Generic.Error)
@@ -96,15 +111,6 @@ class MMTLexer(RegexLexer):
 		],
 		'expectOD': [
 			(r'(\s*)(❘)', bygroups(Whitespace, Token.MMT_OD), '#pop')
-		],
-		'metaAnnotation': [
-			(r'(\s*)(.*?)(\s+)', bygroups(Whitespace, Name.Constant, Whitespace), 'metaAnnotationValue'),
-		],
-		'metaAnnotationValue': [
-			# either URI
-			(r'\?[^ ❘❙❚]*', Literal.URI, '#pop:2'),
-			# or arbitrary expression
-			(r'[^❘❙❚]*', Token.MMT_ObjectExpression, '#pop:2')
 		],
 
 		# Lex structural features within modules (incl. ordinary structures) beginning with their header
@@ -133,8 +139,8 @@ class MMTLexer(RegexLexer):
 			#
 			# IF YOU EDIT, edit the regex below for structural features with body accordingly
 			#
-			(r'([^\s(❙❚:=]+)(\s*)(?:(\()([^)]*)(\)))?(\s*)(?:(:)(\s*)([^❘❙❚=]+))?(\s*)(?:(=)([^\s:❙❚]+))?(\s*)(❙)', bygroups(
-			#  ^^^^^^^^^^^^        ^^^^^^^^^^^^^^^          ^^^^^^^^^^^^^^^^^          ^^^^^^^^^^^^^
+			(r'([^\s(❙❚:=]+)(\s*)(?:(\()([^)]*)(\)))?(\s*)(?:(:)(\s*)([^❘❙❚=]+))?(\s*)(?:(=)(\s*)([^\s:❙❚]+))?(\s*)(❙)', bygroups(
+			#  ^^^^^^^^^^^^        ^^^^^^^^^^^^^^^          ^^^^^^^^^^^^^^^^^          ^^^^^^^^^^^^^^^^^^
 			#    name            optional param list          optional meta part    optional definiens (URI)
 				Name.Class,
 				Whitespace,
@@ -152,7 +158,7 @@ class MMTLexer(RegexLexer):
 				Whitespace,
 
 				# the optional `= <URI>` part
-				Punctuation, Literal.URI,
+				Punctuation, Whitespace, Literal.URI,
 
 				Whitespace,
 				Token.MMT_DD
@@ -255,7 +261,15 @@ class MMTLexer(RegexLexer):
 			(r'(@_description)(\s+)([^❙])+(❙)', bygroups(Keyword, Whitespace, String, Token.MMT_DD)),
 
 			# Meta Annotations
-			(r'(meta)(?= )', Keyword.Declaration, ('expectDD', 'metaAnnotation')),
+			(r'(meta)(\s+)(\S+)(\s+)([^❙❚]+)(\s*)(❙)', bygroups(
+				Keyword.Declaration,
+				Whitespace,
+				Literal.URI,
+				Whitespace,
+				Token.MMT_ObjectExpression,
+				Whitespace,
+				Token.MMT_MD
+			)),
 
 			# Special declarations
 			(r'(include)(\s+)([^❙]+)(❙)', bygroups(Keyword.Namespace, Whitespace, Literal.URI, Token.MMT_DD)),
@@ -276,7 +290,7 @@ class MMTLexer(RegexLexer):
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
 
 			# Nested views
-			# (we duplicate the total|implicit subregex here to account for total *and* implicit structures
+			# (we duplicate the total|implicit subregex here to account for total *and* implicit views
 			#  without imposing an ordering on those keywords)
 			(r'(?:(total|implicit)(\s+))?(?:(total|implicit)(\s+))?(view\b)', bygroups(
 				Keyword, Whitespace,
@@ -314,7 +328,14 @@ class MMTLexer(RegexLexer):
 
 			(r'(@)([^❘❙]+)', bygroups(Punctuation, Name.Constant)),
 			(r'role\b', Keyword, 'expression'),
-			(r'(meta)(?= )', Keyword.Declaration, 'metaAnnotation'),
+			(r'(meta)(\s+)(\S+)(\s+)([^❘❙]+)(\s*)(?=❘|❙)', bygroups(
+				Keyword.Declaration,
+				Whitespace,
+				Literal.URI,
+				Whitespace,
+				Token.MMT_ObjectExpression,
+				Whitespace
+			)),
 			(r'\/\/[^❘❙]*', Comment.Multiline),
 			(r'❘', Token.MMT_OD),
 			(r'❙', Token.MMT_DD, '#pop'),
