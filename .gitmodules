@@ -24,3 +24,7 @@
 	url = https://gl.mathhub.info/MMT/examples.git
 	branch = devel
 	ignore = untracked
+[submodule "mmtpygments/test/data/MathHub/MitM/core"]
+	path = mmtpygments/test/data/MathHub/MitM/core
+	url = https://gl.mathhub.info/MitM/core.git
+	ignore = untracked

@@ -263,10 +263,26 @@ class MMTLexer(RegexLexer):
 			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 			(r'(realize)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 
-			(r'(?:(total)(\s+))?(structure\b)', bygroups(Keyword, Whitespace, Keyword), 'structuralFeatureHeader'),
+			# Structures
+			# (we duplicate the total|implicit subregex here to account for total *and* implicit structures
+			#  without imposing an ordering on those keywords)
+			(r'(?:(total|implicit)(\s+))?(?:(total|implicit)(\s+))?(structure\b)', bygroups(
+				Keyword, Whitespace,
+				Keyword, Whitespace,
+				Keyword.Declaration
+			), 'structuralFeatureHeader'),
 
 			# Nested theories
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
+
+			# Nested views
+			# (we duplicate the total|implicit subregex here to account for total *and* implicit structures
+			#  without imposing an ordering on those keywords)
+			(r'(?:(total|implicit)(\s+))?(?:(total|implicit)(\s+))?(view\b)', bygroups(
+				Keyword, Whitespace,
+				Keyword, Whitespace,
+				Keyword.Declaration
+			), 'viewHeader'),
 
 			# Markdown-style header comments
 			(r'(#+)([^❙]+)(❙)', bygroups(String.Doc, String.Doc, Token.MMT_DD)),
