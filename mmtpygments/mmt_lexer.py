@@ -56,6 +56,9 @@ class MMTLexer(RegexLexer):
 	filenames = ['*.mmt', '*.mmtx']
 	mimetypes = ['application/x-mmt']
 
+	rouge_lexer_original_source = "https://github.com/ComFreek/mmtpygments"
+	rouge_lexer_description = "MMT Surface Syntax"
+
 	flags = re.DOTALL | re.UNICODE | re.IGNORECASE | re.MULTILINE
 
 	tokens = {
