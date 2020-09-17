@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 	Pygments Lexer for MMT Surface Syntax
-	~~~~~~~~~~~~~~~~~~~~
+	========================================
 
 	The MMT project can be found at https://uniformal.github.io/.
 
 	:author: ComFreek <comfreek@outlook.com>
-	:copyright: Copyright 2019 ComFreek
+	:copyright: Copyright 2020 ComFreek
 	:license: ISC, see LICENSE for details.
 """
 
@@ -18,10 +18,14 @@ from pygments.token import Comment, Generic, Keyword, Literal, \
 
 __all__ = ['MMTLexer']
 
+# This value will be set to True by the almost immediate __main__ entrypoint below
+# if the current invocation of Python is in order to convert this lexer to Rouge.
+#
+# It changes the behavior of the bygroups wrapper directly below:
+# upon conversion mode, the bygroups arguments are simply output as a tuple itself
+# (for post-processing by the conversion happening in __main__); upon normal mode,
+# calls are delegated to Pygment's true bygroups function.
 IS_CONVERSION_MODE = False
-
-if __name__ == '__main__' and len(sys.argv) == 2 and sys.argv[1] == 'convert':
-	IS_CONVERSION_MODE = True
 
 def bygroups(*bygroup_args):
 	global IS_CONVERSION_MODE
@@ -32,11 +36,19 @@ def bygroups(*bygroup_args):
 	else:
 		return pygments.lexer.bygroups(*bygroup_args)
 
+# Use this for debugging
+if __name__ == "__main__" and len(sys.argv) == 3 and sys.argv[1] == 'convert':
+	IS_CONVERSION_MODE = True
+
 class MMTLexer(RegexLexer):
 	"""
-	Pygments Lexer for MMT Surface Syntax (.mmt)
+	Pygments Lexer for MMT Surface Syntax
 
 	The MMT project can be found at https://uniformal.github.io/.
+
+	:author: ComFreek <comfreek@outlook.com>
+	:copyright: Copyright 2020 ComFreek
+	:license: ISC, see LICENSE for details.
 	"""
 
 	name = 'MMT'
@@ -48,7 +60,7 @@ class MMTLexer(RegexLexer):
 
 	tokens = {
 		'root': [
-			(r'\s', Whitespace),
+			(r'\s+', Whitespace),
 			(r'\/T .*?❚', Comment.Multiline),
 			(r'\/\/.*?❚', Comment.Multiline),
 
@@ -94,20 +106,100 @@ class MMTLexer(RegexLexer):
 			# or arbitrary expression
 			(r'[^❘❙❚]*', Token.MMT_ObjectExpression, '#pop:2')
 		],
-		'theoryHeader': [
-			(r'\s', Whitespace),
-			# First try matching with meta theory
-			(r'(\S+)(\s*)(:)(\s*)([^❚=]+)', bygroups(
+
+		# Lex structural features within modules (incl. ordinary structures) beginning with their header
+		#
+		# Examples: (w/o = without, w/ = with)
+		#
+		#  (1) `structure s = ?someTheory ❙` (structures w/o meta, body; w/ definiens)
+		#                 ^
+		#  (2) `structure s : ?someTheory ❙` (structures w/o body; w/ meta, definiens)
+		#                 ^
+		#  (3) `structure s : ?someTheory = ?someOtherTheory ❙` (structures w/o body; w/ meta, definiens)
+		#                 ^
+		#  (4) `reflect list1(a: type) : ☞?InductivelyDefinedTypes/list_decls(a:type) ❙` (structural features w/o body; w/ meta)
+		#               ^
+		#  (5) `inductive list1_unreflected(a: type) ❘ = list: type ❙  nil: list ❙ cons: a ⟶ list ⟶ list ❙` (structural features w/o meta; w/ body, parameter list)
+		#                 ^
+		#
+		# and probably more combinations.
+		# The caret (^) stands for the character at which this rule set can and should be invoked.
+		# In particular, neither `structure` nor any other name of a structural feature (e.g. `reflect`, `inductive`)
+		# can be processed by this rule set.
+		'structuralFeatureHeader': [
+			(r'\s+', Whitespace),
+
+			# Structural Features without body
+			#
+			# IF YOU EDIT, edit the regex below for structural features with body accordingly
+			#
+			(r'([^\s(❙❚:=]+)(\s*)(?:(\()([^)]*)(\)))?(\s*)(?:(:)(\s*)([^❘❙❚=]+))?(\s*)(?:(=)([^\s:❙❚]+))?(\s*)(❙)', bygroups(
+			#  ^^^^^^^^^^^^        ^^^^^^^^^^^^^^^          ^^^^^^^^^^^^^^^^^          ^^^^^^^^^^^^^
+			#    name            optional param list          optional meta part    optional definiens (URI)
 				Name.Class,
 				Whitespace,
-				Punctuation, Whitespace, Name.Variable # the meta part
-			), 'moduleDefiniens'),
 
-			# Then without meta theory
-			(r'[^❚=]+', Name.Class, 'moduleDefiniens')
+				# the optional parameter list (TODO: doesn't handle nested brackets)
+				Punctuation,
+				Name.Variable,
+				Punctuation,
+
+				Whitespace,
+
+				# the optional meta part
+				Punctuation, Whitespace, Name.Variable,
+				
+				Whitespace,
+
+				# the optional `= <URI>` part
+				Punctuation, Literal.URI,
+
+				Whitespace,
+				Token.MMT_DD
+			), '#pop:1'),
+
+			# Structural Features with body: process param and meta part if existing, then delegate to `moduleDefiniens`
+			#
+			# IF YOU EDIT, edit the regex above for structural features without body accordingly
+			#
+			(r'([^\s(❙❚:=]+)(\s*)(?:(\()([^)]*)(\)))?(\s*)(?:(:)(\s*)([^❘❙❚=]+))?(\s*)', bygroups(
+			#  ^^^^^^^^^^^^        ^^^^^^^^^^^^^^^          ^^^^^^^^^^^^^^^^^
+			#    name            optional param list        optional meta part
+				Name.Class,
+				Whitespace,
+
+				# the optional parameter list (TODO: doesn't handle nested brackets)
+				Punctuation,
+				Name.Variable,
+				Punctuation,
+
+				Whitespace,
+
+				# the optional meta part
+				Punctuation, Whitespace, Name.Variable,
+				
+				Whitespace
+			), 'moduleDefiniens')
+		],
+
+		'theoryHeader': [
+			(r'\s+', Whitespace),
+
+			(r'([^\s❙❚:=]+)(\s*)(?:(:)(\s*)([^\s❙❚=]+))?(\s*)(?:(>)([^❙❚=]+))?', bygroups(
+				Name.Class,
+				Whitespace,
+
+				# the optional meta part
+				Punctuation, Whitespace, Literal.URI,
+
+				Whitespace,
+
+				# the optional parameter specification (for parametric theories)
+				Punctuation, Name.Variable # TODO: Name.Variable is a crude approximation for coloring here
+			), 'moduleDefiniens')
 		],
 		'moduleDefiniens': [
-			(r'\s', Whitespace),
+			(r'\s+', Whitespace),
 			(r'❘', Token.MMT_OD),
 
 			# usually theories and views do not have notation expressions, but usages of structural features within 
@@ -115,53 +207,27 @@ class MMTLexer(RegexLexer):
 			(r'#', Punctuation, 'notationExpression'),
 			(r'=', Punctuation, 'moduleBody'),
 
-			# The case of a module/structural feature with an empty body
+			# The cases of a module/structural feature with an empty body
 			# => jump back to outer container (either root or other module in case of nested modules)
-			#    theoryHeader or viewHeader or structuralFeatureHeader --> outer container
-			(r'[❙❚]', Token.MMT_MD, '#pop:2')
+			(r'❚', Token.MMT_MD, '#pop:2')
 		],
 		'viewHeader': [
-			(r'\s', Whitespace),
+			(r'\s+', Whitespace),
 			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)([^❚=]+)', bygroups(
 					Name.Class,
 					Whitespace,
 					Punctuation,
 					Whitespace,
-					Name.Variable,
+					Literal.URI,
 					Whitespace,
 					Punctuation,
 					Whitespace,
-					Name.Variable,
+					Literal.URI,
 			), 'moduleDefiniens')
 		],
 
-		# The header of a structural feature.
-		#
-		# For example, in the following sample structural feature use
-		#
-		# `ind_definition f(a: T, b: T) : myIndType(a, b) ❘ = ... ❚`
-		#                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-		#
-		# this production matches everything subscripted with ^ and then delegates
-		# to `moduleDefiniens` for further processing.
-		# In turn, `moduleDefiniens` then delegates to `moduleBody`, which finishing its matching,
-		# jumps back 3 levels, i.e., to the state where `structuralFeatureHeader` was pushed.
-		'structuralFeatureHeader': [
-			(r'\s', Whitespace),
-
-			(r'(\S+)(\s*)(\()([^)]*)(\))(\s*)(:)?', bygroups(
-				Name.Class,
-				Whitespace,
-				Punctuation,
-				Token.MMT_ObjectExpression,
-				Punctuation,
-				Whitespace,
-				Punctuation
-			), ('moduleDefiniens', 'expression'))
-		],
-
 		'diagramHeader': [
-			(r'\s', Whitespace),
+			(r'\s+', Whitespace),
 			# First try matching with meta theory
 			(r'(\S+)(\s*)(:)(\s*)([^❚=]+)', bygroups(
 				Name.Variable,
@@ -175,10 +241,10 @@ class MMTLexer(RegexLexer):
 		],
 
 		# Modules subsume both theories and views
-		# Invariant: moduleBody jumps at end two levels up since it assumes a theoryHeader or viewHeader before
+		# Invariant: moduleBody jumps at end two levels up since it assumes one of {theory|view|structuralFeature}Header before
 		'moduleBody': [
-			(r'\s', Whitespace),
-			
+			(r'\s+', Whitespace),
+
 			# Comments
 			# comments in module may also be ended with the module delimiter ❚
 			(r'\/T .*?(❙|❚)', Comment.Multiline),
@@ -197,8 +263,7 @@ class MMTLexer(RegexLexer):
 			(r'(rule)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword.Namespace, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 			(r'(realize)(\s+)([^❙]+)(\s*)(❙)', bygroups(Keyword, Whitespace, Literal.URI, Whitespace, Token.MMT_DD)),
 
-			# Structures
-			(r'(total\s+)?(structure\b)', Keyword, 'theoryHeader'),
+			(r'(?:(total)(\s+))?(structure\b)', bygroups(Keyword, Whitespace, Keyword), 'structuralFeatureHeader'),
 
 			# Nested theories
 			(r'theory\b', Keyword.Declaration, 'theoryHeader'),
@@ -207,7 +272,7 @@ class MMTLexer(RegexLexer):
 			(r'(#+)([^❙]+)(❙)', bygroups(String.Doc, String.Doc, Token.MMT_DD)),
 
 			# Structural features
-			(r'([^\s:=#❘❙❚]+)(\s+)(?=[^\s:=#❘❙❚]+\()', bygroups(Keyword.Declaration, Whitespace), 'structuralFeatureHeader'),
+			(r'([^\s:=#❘❙❚]+)(\s+)(?=[^\s:=@#❘❙❚]+)', bygroups(Keyword.Declaration, Whitespace), 'structuralFeatureHeader'),
 
 			# Constant declarations (only if nothing else applied!)
 			# only match the name greedily until a whitespace \s, a typing colon :, a notation expression #,
@@ -222,7 +287,7 @@ class MMTLexer(RegexLexer):
 			(r'❚', Token.MMT_MD, '#pop:3')
 		],
 		'constantDeclaration': [
-			(r'\s', Whitespace),
+			(r'\s+', Whitespace),
 			(r':', Punctuation, 'expression'),
 			(r'=', Punctuation, 'expression'),
 			(r'#', Punctuation, 'notationExpression'),
@@ -275,7 +340,7 @@ class MMTLexer(RegexLexer):
 			(r'(?=[❘❙❚])', Whitespace, '#pop')
 		],
 		'expression': [
-			(r'\s', Whitespace),
+			(r'\s+', Whitespace),
 			(r'[^❘❙❚]*', Token.MMT_ObjectExpression, '#pop')
 		],
 	}
@@ -291,21 +356,27 @@ if __name__ == "__main__":
 
 		lexer = MMTLexer()
 		print(list(lexer.get_tokens(test_file.read())))
-	elif len(sys.argv) == 2 and sys.argv[1] == 'convert':
-		from pygments_to_rouge import convert_pygments_regex_lexer
 	
-		with io.open('mmt.rb', mode="w", newline="\n", encoding="utf-8") as ruby_lexer:
+	# if you change the conditions here, also change it way above the MMTLexer class
+	# in the code snippet that sets IS_CONVERSION_MODE to true.
+	elif len(sys.argv) == 3 and sys.argv[1] == 'convert':
+		from pygments_to_rouge import convert_pygments_regex_lexer
+
+		out_filename = sys.argv[2]
+	
+		with io.open(out_filename, mode="w", newline="\n", encoding="utf-8") as ruby_lexer:
 			ruby_lexer.write(convert_pygments_regex_lexer(
 				MMTLexer,
 				rouge_lexer_name = 'MMT',
 				rouge_title = 'mmt',
 				rouge_tag = 'mmt'
 			))
-		print('Successfully converted, see mmt.rb')
+		print('Successfully converted, see `{}`'.format(out_filename))
 	else:
 		print("Usage\n==========")
-		print(" a) `{} debug filename-of-MMT-file` to debug this Pygments lexer`".format(sys.argv[0]))
+		print(" a) `{} debug in-filename` to debug this Pygments lexer`".format(sys.argv[0]))
 		print("    It will be read in UTF-8 encoding and lexed through our parser.")
-		print(" b) `{} convert` to convert this Pygments lexer to a Rouge lexer".format(sys.argv[0]))
+		print("")
+		print(" b) `{} convert out-filename` to convert this Pygments lexer to a Rouge lexer".format(sys.argv[0]))
 
 		sys.exit(1)

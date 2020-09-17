@@ -12,9 +12,13 @@ module Rouge
 			title 'mmt'
 			desc <<-DESC
 
-	Pygments Lexer for MMT Surface Syntax (.mmt)
+	Pygments Lexer for MMT Surface Syntax
 
 	The MMT project can be found at https://uniformal.github.io/.
+
+	:author: ComFreek <comfreek@outlook.com>
+	:copyright: Copyright 2020 ComFreek
+	:license: ISC, see LICENSE for details.
 	
 DESC
 			tag 'mmt'
@@ -24,18 +28,34 @@ DESC
 				rule %r/\s/im do
 					token Text::Whitespace
 				end
+				rule %r/\/T .*?❚/im do
+					token Comment::Multiline
+				end
+				rule %r/\/\/.*?❚/im do
+					token Comment::Multiline
+				end
+				rule %r/(document)(\s+)(\S+?)(?=\s+)/im do
+					groups Keyword::Declaration,Text::Whitespace,Name::Namespace
+				end
 				rule %r/(meta)(?= )/im do
 					token Keyword::Declaration
 					push :expectMD
 					push :metaAnnotation
 				end
-				rule %r/(namespace)(\s+)(\S+)(\s*)(❚)/im do
+				rule %r/(namespace)(\s+)(\S+?)(\s*)(❚)/im do
 					groups Keyword::Namespace,Text::Whitespace,Text,Text::Whitespace,Text
 				end
-				rule %r/(import)(\s+)(\S+)(\s+)(\S+)(\s*)(❚)/im do
+				rule %r/(import)(\s+)(\S+)(\s+)(\S+?)(\s*)(❚)/im do
 					groups Keyword::Namespace,Text::Whitespace,Name::Namespace,Text::Whitespace,Text,Text::Whitespace,Text
 				end
-				rule %r/theory\b/im do
+				rule %r/(fixmeta|ref|rule)(\s+)(\S+?)(\s*)(❚)/im do
+					groups Comment::Preproc,Text::Whitespace,Text,Text::Whitespace,Text
+				end
+				rule %r/diagram\b/im do
+					token Keyword::Declaration
+					push :diagramHeader
+				end
+				rule %r/(theory)\b/im do
 					token Keyword::Declaration
 					push :theoryHeader
 				end
@@ -47,29 +67,26 @@ DESC
 					token Keyword::Declaration
 					push :viewHeader
 				end
-				rule %r/\/T .*?❚/im do
-					token Comment::Multiline
-				end
-				rule %r/\/\/.*?❚/im do
-					token Comment::Multiline
+				rule %r/[^❚]*?❚/im do
+					token Generic::Error
 				end
 			end
 			state :expectMD do
 				rule %r/(\s*)(❚)/im do
 					groups Text::Whitespace,Text
-pop!(1)
+					pop!(1)
 				end
 			end
 			state :expectDD do
 				rule %r/(\s*)(❙)/im do
 					groups Text::Whitespace,Text
-pop!(1)
+					pop!(1)
 				end
 			end
 			state :expectOD do
 				rule %r/(\s*)(❘)/im do
 					groups Text::Whitespace,Text
-pop!(1)
+					pop!(1)
 				end
 			end
 			state :metaAnnotation do
@@ -81,44 +98,90 @@ pop!(1)
 			state :metaAnnotationValue do
 				rule %r/\?[^ ❘❙❚]*/im do
 					token Text
-pop!(2)
+					pop!(2)
 				end
 				rule %r/[^❘❙❚]*/im do
 					token Text
-pop!(2)
+					pop!(2)
 				end
 			end
 			state :theoryHeader do
 				rule %r/\s/im do
 					token Text::Whitespace
 				end
-				rule %r/(\S+)(\s*)(:)(\s*)(\S+)(\s*)(=)/im do
-					groups Name::Variable,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable,Text::Whitespace,Punctuation
+				rule %r/([^\s❙❚=]+)(\s*)(?:(:)(\s*)([^❙❚=]+))?(\s*)(?:(>)([^❙❚=]+))?/im do
+					groups Name::Class,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable,Text::Whitespace,Punctuation,Name::Variable
+					push :moduleDefiniens
+				end
+			end
+			state :moduleDefiniens do
+				rule %r/\s/im do
+					token Text::Whitespace
+				end
+				rule %r/❘/im do
+					token Text
+				end
+				rule %r/#/im do
+					token Punctuation
+					push :notationExpression
+				end
+				rule %r/=/im do
+					token Punctuation
 					push :moduleBody
 				end
-				rule %r/(\S+)(\s*)(=)/im do
-					groups Name::Variable,Text::Whitespace,Punctuation
-					push :moduleBody
+				rule %r/[❙❚]/im do
+					token Text
+					pop!(2)
 				end
 			end
 			state :viewHeader do
 				rule %r/\s/im do
 					token Text::Whitespace
 				end
-				rule %r/(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)(\S+)(\s*)(=)/im do
-					groups Name::Variable,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable,Text::Whitespace,Punctuation
-					push :moduleBody
+				rule %r/(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)([^❚=]+)/im do
+					groups Name::Class,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable
+					push :moduleDefiniens
+				end
+			end
+			state :structuralFeatureHeader do
+				rule %r/\s/im do
+					token Text::Whitespace
+				end
+				rule %r/(\S+)(\s*)(\()([^)]*)(\))(\s*)(:)?/im do
+					groups Name::Class,Text::Whitespace,Punctuation,Text,Punctuation,Text::Whitespace,Punctuation
+					push :moduleDefiniens
+					push :expression
+				end
+			end
+			state :diagramHeader do
+				rule %r/\s/im do
+					token Text::Whitespace
+				end
+				rule %r/(\S+)(\s*)(:)(\s*)([^❚=]+)/im do
+					groups Name::Variable,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable
+					push :expression
+				end
+				rule %r/[^❚=]+/im do
+					token Name::Variable
+					push :expression
+				end
+				rule %r/❚/im do
+					token Text
+					pop!(1)
 				end
 			end
 			state :moduleBody do
 				rule %r/\s/im do
 					token Text::Whitespace
 				end
-				rule %r/\/T .*?❙/im do
+				rule %r/\/T .*?(❙|❚)/im do
 					token Comment::Multiline
 				end
-				rule %r/\/\/.*?❙/im do
+				rule %r/\/\/.*?(❙|❚)/im do
 					token Comment::Multiline
+				end
+				rule %r/(@_description)(\s+)([^❙])+(❙)/im do
+					groups Keyword,Text::Whitespace,Literal::String,Text
 				end
 				rule %r/(meta)(?= )/im do
 					token Keyword::Declaration
@@ -129,11 +192,18 @@ pop!(2)
 					groups Keyword::Namespace,Text::Whitespace,Text,Text
 				end
 				rule %r/(constant)(\s+)([^\s:❘❙]+)/im do
-					groups Keyword::Declaration,Text::Whitespace,Name::Constant
+					groups Keyword::Declaration,Text::Whitespace,Name::Variable::Class
 					push :constantDeclaration
 				end
 				rule %r/(rule)(\s+)([^❙]+)(\s*)(❙)/im do
 					groups Keyword::Namespace,Text::Whitespace,Text,Text::Whitespace,Text
+				end
+				rule %r/(realize)(\s+)([^❙]+)(\s*)(❙)/im do
+					groups Keyword,Text::Whitespace,Text,Text::Whitespace,Text
+				end
+				rule %r/(total\s+)?(structure\b)/im do
+					token Keyword
+					push :theoryHeader
 				end
 				rule %r/theory\b/im do
 					token Keyword::Declaration
@@ -142,13 +212,20 @@ pop!(2)
 				rule %r/(#+)([^❙]+)(❙)/im do
 					groups Literal::String::Doc,Literal::String::Doc,Text
 				end
-				rule %r/[^\s:❘❙❚]+/im do
-					token Name::Constant
+				rule %r/([^\s:=#❘❙❚]+)(\s+)(?=[^\s:=#❘❙❚]+\()/im do
+					groups Keyword::Declaration,Text::Whitespace
+					push :structuralFeatureHeader
+				end
+				rule %r/[^\s:=#❘❙❚]+/im do
+					token Name::Variable::Class
 					push :constantDeclaration
+				end
+				rule %r/[^❚]*?❙/im do
+					token Generic::Error
 				end
 				rule %r/❚/im do
 					token Text
-pop!(2)
+					pop!(3)
 				end
 			end
 			state :constantDeclaration do
@@ -166,6 +243,9 @@ pop!(2)
 				rule %r/#/im do
 					token Punctuation
 					push :notationExpression
+				end
+				rule %r/(@_description)(\s+)([^❘❙])+/im do
+					groups Keyword,Text::Whitespace,Literal::String
 				end
 				rule %r/(@)([^❘❙]+)/im do
 					groups Punctuation,Name::Constant
@@ -186,7 +266,15 @@ pop!(2)
 				end
 				rule %r/❙/im do
 					token Text
-pop!(1)
+					pop!(1)
+				end
+				rule %r/[^❙❚]*?=[^❚]*?❚/im do
+					token Generic::Error
+					pop!(1)
+				end
+				rule %r/[^❚]*?❙/im do
+					token Generic::Error
+					pop!(1)
 				end
 			end
 			state :notationExpression do
@@ -204,23 +292,23 @@ pop!(1)
 				end
 				rule %r/(\bprec)(\s+)(-?\d+)/im do
 					groups Keyword,Text::Whitespace,Literal::Number::Integer
-pop!(1)
+					pop!(1)
 				end
-				rule %r/([^\s\d…❘❙]+)/im do
+				rule %r/([^\s\d…❘❙❚]+)/im do
 					token Literal::String::Symbol
 				end
-				rule %r/(?=[❘❙])/im do
+				rule %r/(?=[❘❙❚])/im do
 					token Text::Whitespace
-pop!(1)
+					pop!(1)
 				end
 			end
 			state :expression do
 				rule %r/\s/im do
 					token Text::Whitespace
 				end
-				rule %r/[^❘❙]+/im do
+				rule %r/[^❘❙❚]*/im do
 					token Text
-pop!(1)
+					pop!(1)
 				end
 			end
 		end

@@ -59,9 +59,11 @@ DESC
 				if rule[2] == '#pop':
 					next_state_type = 'pop'
 					next_state_info = 1
-				elif rule[2] == "#pop:2":
-					next_state_type = 'pop' # TODO fix this generically
-					next_state_info = 2
+				elif rule[2].startswith("#pop:"): # pop the number of states given after colon
+					number_of_states = int(rule[2][len("#pop:"):]) 
+
+					next_state_type = 'pop'
+					next_state_info = number_of_states
 				else:
 					next_state_type = 'push'
 					next_state_info = [rule[2]] # push a single state
@@ -114,7 +116,7 @@ def format_ruby_next_state(next_state_type, next_state_info, indentation):
 		)) + '\n'
 	elif next_state_type == 'pop':
 		# next_state_info is number of states to be popped
-		return 'pop!({})\n'.format(next_state_info)
+		return '{}pop!({})\n'.format(indentation, next_state_info)
 	else:
 		return '' # Do nothing
 
