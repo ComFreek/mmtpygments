@@ -38,7 +38,7 @@ def bygroups(*bygroup_args):
 		return pygments.lexer.bygroups(*bygroup_args)
 
 # Use this for debugging
-if __name__ == "__main__" and len(sys.argv) == 3 and sys.argv[1] == 'convert':
+if __name__ == "__main__" and sys.argv[1] == 'convert':
 	IS_CONVERSION_MODE = True
 
 class MMTLexer(RegexLexer):
@@ -62,6 +62,8 @@ class MMTLexer(RegexLexer):
 	rouge_tag = 'mmt'
 	rouge_description = "MMT Surface Syntax"
 	rouge_original_source = "https://github.com/ComFreek/mmtpygments"
+
+	codemirror_name = 'mmt'
 
 	flags = re.DOTALL | re.UNICODE | re.IGNORECASE | re.MULTILINE
 
@@ -412,7 +414,8 @@ if __name__ == "__main__":
 			from pygments_to_rouge import PygmentsToRougeConverter
 			converter = PygmentsToRougeConverter()
 		elif sys.argv[2] == 'codemirror':
-			pass
+			from pygments_to_codemirror import PygmentsToCodeMirrorConverter
+			converter = PygmentsToCodeMirrorConverter()
 
 		out_filename = sys.argv[3]
 	

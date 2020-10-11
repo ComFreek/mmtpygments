@@ -65,52 +65,6 @@ class PygmentsToRougeConverter(PygmentsConverter):
 
 	def transform_state_footer(self, state):
 		return "\t\t\tend\n"
-
-	def transform(self, regex_lexer):
-		'''
-		Transform a Pygments regex lexer class
-		'''
-
-		target = ""
-		
-		target += self.transform_lexer_header(regex_lexer)
-		
-		for state, rules in regex_lexer.tokens.items():
-			target += self.transform_state_header(state)
-
-			for rule in rules:
-				regex = rule[0]
-				token_type = rule[1]
-				if not type(token_type) is tuple:
-					token_type = [token_type]
-			
-				next_state_type = None
-				next_state_info = None
-
-				if len(rule) == 3 and isinstance(rule[2], str):
-					if rule[2] == '#pop':
-						next_state_type = 'pop'
-						next_state_info = 1
-					elif rule[2].startswith("#pop:"): # pop the number of states given after colon
-						number_of_states = int(rule[2][len("#pop:"):]) 
-
-						next_state_type = 'pop'
-						next_state_info = number_of_states
-					else:
-						next_state_type = 'push'
-						next_state_info = [rule[2]] # push a single state
-				elif len(rule) == 3 and isinstance(rule[2], tuple):
-					# rule[2] contains a list of states to be pushed
-					next_state_type = 'push'
-					next_state_info = rule[2]
-			
-				target += self.transform_rule(regex, token_type, next_state_type, next_state_info, indentation="\t\t\t\t", regex_python_flags=regex_lexer.flags)
-
-			target += self.transform_state_footer(state)
-	
-		target += self.transform_lexer_footer(regex_lexer)
-
-		return target
 	
 	def transform_lexer_footer(self, regex_lexer):
 		return "\t\tend\n\tend\nend\n"

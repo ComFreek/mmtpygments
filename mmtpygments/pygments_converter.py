@@ -14,6 +14,30 @@ class PygmentsConverter:
 	def __init__(self):
 		pass
 	
+	PYGMENTS_START_STATE_NAME = 'root'
+	target_start_state_name = 'root'
+
+	def transform_state_name(self, state):
+		"""
+		Injectively transform a state name
+
+		By default, if not overridden, this methods transforms PYGMENTS_START_STATE_NAME
+		to target_start_state_name.
+
+		Use cases in general:
+
+		  1. the target framework does not support specific state names (e.g. no whitespace)
+		  2. the start state name in the target framework differs from PYGMENTS_TART_STATE_NAME
+		"""
+		if state == self.PYGMENTS_START_STATE_NAME:
+			return self.target_start_state_name
+		elif state == self.target_start_state_name:
+			return state + '__permuted'
+		elif state == self.target_start_state_name + '__permuted':
+			raise Exception('Permutation exhausted')
+		else:
+			return state
+
 	def transform_lexer_header(self, regex_lexer):
 		pass
 
@@ -42,13 +66,14 @@ class PygmentsConverter:
 	def transform_rule(self, regex, token_types, next_state_type, next_state_info, indentation = "", regex_python_flags = []):
 		pass
 
-	def transform(self, regex_lexer, rouge_lexer_name, rouge_title, rouge_tag):
+	def transform(self, regex_lexer):
 		target = ""
 		
 		target += self.transform_lexer_header(regex_lexer)
-		target += self.transform_state_header(regex_lexer)
 		
-		for state, rules in regex_lexer.tokens.items():
+		for raw_state, rules in regex_lexer.tokens.items():
+			state = self.transform_state_name(raw_state)
+
 			target += self.transform_state_header(state)
 
 			for rule in rules:
@@ -71,14 +96,16 @@ class PygmentsConverter:
 						next_state_info = number_of_states
 					else:
 						next_state_type = 'push'
-						next_state_info = [rule[2]] # push a single state
+						next_state_info = [self.transform_state_name(rule[2])] # push a single state
 				elif len(rule) == 3 and isinstance(rule[2], tuple):
 					# rule[2] contains a list of states to be pushed
 					next_state_type = 'push'
-					next_state_info = rule[2]
+					next_state_info = map(self.transform_state_name, rule[2])
 			
 				target += self.transform_rule(regex, token_type, next_state_type, next_state_info, indentation="\t\t\t\t", regex_python_flags=regex_lexer.flags)
 
 			target += self.transform_state_footer(state)
 	
 		target += self.transform_lexer_footer(regex_lexer)
+
+		return target
