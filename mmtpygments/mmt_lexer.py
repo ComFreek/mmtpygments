@@ -230,7 +230,7 @@ class MMTLexer(RegexLexer):
 		],
 		'viewHeader': [
 			(r'\s+', Whitespace),
-			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)([^❚=]+)', bygroups(
+			(r'(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|→)(\s*)([^\s❚=]+)', bygroups(
 					Name.Class,
 					Whitespace,
 					Punctuation,
@@ -239,7 +239,7 @@ class MMTLexer(RegexLexer):
 					Whitespace,
 					Punctuation,
 					Whitespace,
-					Literal.URI,
+					Literal.URI
 			), 'moduleDefiniens')
 		],
 

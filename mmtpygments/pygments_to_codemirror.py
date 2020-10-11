@@ -104,6 +104,10 @@ class PygmentsToCodeMirrorConverter(PygmentsConverter):
 		return "\t\t],\n"
 
 	def transform_lexer_header(self, python_lexer_class):
+		print(f"INFO: ignoring {python_lexer_class}.{{aliases, filenames}} for conversion since CodeMirror doesn't have such concepts")
+
+		mode_name = python_lexer_class.codemirror_name
+
 		return """// remove this (?): CodeMirror, copyright (c) by Marijn Haverbeke and others
 // remove this (?): Distributed under an MIT license: https://codemirror.net/LICENSE
 
@@ -124,11 +128,20 @@ class PygmentsToCodeMirrorConverter(PygmentsConverter):
 }})(function(CodeMirror) {{
 	"use strict";
 
+	{mime_type_declarations}
+
 	CodeMirror.defineAdvancedMode("{mode_name}", {{
 """.format(
 		python_lexer_source = python_lexer_class.rouge_original_source,
-		mode_name = python_lexer_class.codemirror_name,
+		mime_type_declarations = '\n'.join(map(
+			lambda mime: self.transform_mimetype(mode_name, mime),
+			python_lexer_class.mimetypes
+		)),
+		mode_name = mode_name
 	)
 
 	def transform_lexer_footer(self, regex_lexer):
 		return "\t});\n});"
+
+	def transform_mimetype(self, mode_name, mimetype):
+		return f'CodeMirror.defineMIME("{mimetype}", "{mode_name}");'
