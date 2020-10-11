@@ -1,6 +1,6 @@
 <!doctype html>
 
-<title>CodeMirror: MMT Autocomplete Demo</title>
+<title>MMT QuickEditor</title>
 <meta charset="utf-8"/>
 
 <!-- vvv update the version here if you update the ../exports/codemirror Git submodule -->
@@ -10,13 +10,13 @@
 
 <!-- vvv update the version here if you update the ../exports/codemirror Git submodule -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.min.js"></script>
-<script src="../exports/CodeMirror/addon/hint/show-hint.js"></script>
+<script src="../exports/codemirror/addon/hint/show-hint.js"></script>
 
 <script src="../exports/codemirror/addon/mode/advanced.js"></script>
 <script src="../exports/codemirror/mode/mmt/mmt.js"></script>
 
 <article>
-<h2>Autocomplete Demo</h2>
+<h1>MMT QuickEditor</h1>
 <form><textarea id="code" name="code">namespace http://example.com/mmt-demo ❚
 
 import lfx http://gl.mathhub.info/MMT/LFX/TypedHierarchy ❚
@@ -39,7 +39,7 @@ view v : ?S -> ?T =
 	c = d ❙
 ❚</textarea></form>
 
-<p>Press <strong>ctrl-space</strong> to activate autocompletion.</p>
+<p>Type "j" and press <strong>ctrl-space</strong> to activate autocompletion for Unicode characters.</p>
 
 <script>
 function loadAbbreviations() {
