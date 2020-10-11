@@ -87,10 +87,10 @@ CodeMirror.registerHelper("hint", "javascript", function(editor, options) {
 });
 
 
-var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  mode: "mmt",
   lineNumbers: true,
-  extraKeys: {"Ctrl-Space": "autocomplete"},
-  mode: {name: "javascript", globalVars: true}
+  extraKeys: {"Ctrl-Space": "autocomplete"}
 });
 
 function getRawAbbreviations() {
