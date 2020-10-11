@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- constants declaring multiple notations like `c # a ❘ ## b ❘ ### c` now get a better highlighting (previously all but the first `#` were inconveniently grayed out)
+
 ## [1.0.0] - 2020-09-17
 
 ### Added
