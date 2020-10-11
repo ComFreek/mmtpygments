@@ -1,0 +1,530 @@
+<!doctype html>
+
+<title>CodeMirror: MMT Autocomplete Demo</title>
+<meta charset="utf-8"/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/addon/hint/show-hint.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/addon/hint/show-hint.min.js"></script>
+<script src="addon/mode/advanced.js"></script>
+<script src="mode/mmt/mmt.js"></script>
+
+<article>
+<h2>Autocomplete Demo</h2>
+<form><textarea id="code" name="code">namespace http://example.com/mmt-demo ❚
+
+import lfx http://gl.mathhub.info/MMT/LFX/TypedHierarchy ❚
+import finite http://gl.mathhub.info/MMT/LFX/Finite ❚
+import rules scala://structuralfeatures.lf.mmt.kwarc.info❚
+
+theory Notations =
+	Pi      # { V1T,… } 2 prec -10000❙
+	lambda  # [ V1T,… ] 2 prec -10000❙
+	apply   # 1%w…        prec -10❙
+	arrow   # 1⟶…        prec  -9990❙
+	case    # [ V2T,… ] 1 ⇝ 3 prec 5❙
+❚
+
+// Views ❚
+view emptyView : ?S -> ?T = ❚
+
+view v : ?S -> ?T =
+	a = b ❙
+	c = d ❙
+❚</textarea></form>
+
+<p>Press <strong>ctrl-space</strong> to activate autocompletion.</p>
+
+<script>
+function loadAbbreviations() {
+  return new Map(
+    getRawAbbreviations()
+      .split('\n')
+      .filter(line => line != '' && !line.startsWith('//'))
+      .map(line => line.split('|'))
+  );
+}
+
+const abbreviations = loadAbbreviations();
+const Pos = CodeMirror.Pos;
+
+function findMatchingAbbreviations(str, cursorLine, tokenEndCh) {
+  str = str.toLowerCase();
+
+  const matches = [];
+
+  for (const [abbrKey, abbrValue] of abbreviations.entries()) {
+    const caseInsensitiveAbbrKey = abbrKey.toLowerCase();
+
+    for (let i = 0; i < abbrKey.length; i++) {
+      if (str.endsWith(caseInsensitiveAbbrKey.slice(0, i + 1))) {
+        matches.push({
+          text: abbrValue,
+          displayText: `${abbrValue}\t\t${abbrKey}`,
+          from: Pos(cursorLine, tokenEndCh - (i + 1)),
+          to: Pos(cursorLine, tokenEndCh)
+        });
+      }
+    }
+  }
+
+  return matches;
+}
+
+CodeMirror.registerHelper("hint", "javascript", function(editor, options) {
+  // Find the token at the cursor
+  var cur = editor.getCursor();
+  var token = editor.getTokenAt(cur);
+
+  const matchingAbbreviations = findMatchingAbbreviations(token.string, cur.line, token.end);
+  return {
+    list: matchingAbbreviations,
+    from: Pos(cur.line, token.start),
+    to: Pos(cur.line, token.end)
+  };
+});
+
+
+var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  lineNumbers: true,
+  extraKeys: {"Ctrl-Space": "autocomplete"},
+  mode: {name: "javascript", globalVars: true}
+});
+
+function getRawAbbreviations() {
+  return `jMD|❚
+jDD|❙
+jOD|❘
+jsharp|♯
+jflat|♭
+jra|→
+jla|←
+jlra|↔
+jrA|⇒
+jlA|⇐
+jlrA|⇔
+jraa|⟶
+jlaa|⟵
+jlraa|⟷
+jrAA|⟹
+jlAA|⟸
+jlrAA|⟺
+jhra|↪
+jhla|↩
+jrightarrow|→
+jleftarrow|←
+jleftrightarrow|↔
+jRightarrow|⇒
+jLeftarrow|⇐
+jLeftrightarrow|⇔
+jhookrightarrow|↪
+jhookleftarrow|↩
+jlongrightarrow|⟶
+jlongleftarrow|⟵
+jlongleftrightarrow|⟷
+jLongrightarrow|⟹
+jLongleftarrow|⟸
+jLongleftrightarrow|⟺
+jbla|↦
+jblA|⤇
+jblaa|⟼
+jblAA|⤇
+jbra|↤
+jbrA|⤆
+jbraa|⟻
+jbrAA|⤆
+jls|⇝
+jlss|⟿
+jrs|⇜
+jrss|⬳
+jmapsto|↦
+jMapsto|⤇
+jlongmapsto|⟼
+jLongmapsto|⤇
+jmapsfrom|↤
+jMapsfrom|⤆
+jlongmapsfrom|⟻
+jLongmapsfrom|⤆
+jrightsquigarrow|⇝
+jlongrightsquigarrow|⟿
+jleftsquigarrow|⇜
+jlongleftsquigarrow|⬳
+jlolli|⊸
+jrewrites|⟿
+juparrow|↑
+jdownarrow|↓
+jupdownarrow|↕
+jUparrow|⇑
+jDownarrow|⇓
+jUpdownarrow|⇕
+jcontra|↯
+jcheck|✓
+jast|∗
+jstar|★
+jcdot|⋅
+jcirc|∘
+jbullet|∙
+jtimes|×
+jpm|±
+jmp|∓
+jdiv|÷
+jwedge|∧
+jvee|∨
+jcap|∩
+jcup|∪
+jsqcap|⊓
+jsqcup|⊔
+joplus|⊕
+jominus|⊖
+jotimes|⊗
+joslash|⊘
+jodiv|⨸
+joast|⊛
+jocirc|⊚
+jodot|⊙
+joequal|⊜
+jo0|⓪
+jo1|①
+jo2|②
+jo3|③
+jo4|④
+jo5|⑤
+jo6|⑥
+jo7|⑦
+jo8|⑧
+jo9|⑨
+juplus|⊎
+judot|⊍
+jcapdot|⩀
+jcapbar|⩃
+jbigtimes|⨉
+jbigcirc|◯
+jbigwedge|⋀
+jbigvee|⋁
+jbigcap|⋂
+jbigcup|⋃
+jbigsqcap|⨅
+jbigsqcup|⨆
+jbigdiamond|◇
+jbigoplus|⨁
+jbigotimes|⨂
+jbiguplus|⨄
+jbiguminus|⩁
+jbigudot|⨃
+jbigubar|⩂
+jsubset|⊂
+jsupset|⊃
+jsq|⊆
+jsubseteq|⊆
+jsupseteq|⊇
+jnsubset|⊄
+jnsupset|⊅
+jnsubseteq|⊈
+jnsupseteq|⊉
+jsubsetneq|⊊
+jsupsetneq|⊋
+jleq|≤
+jgeq|≥
+jll|≪
+jgg|≫
+jprec|≺
+jsucc|≻
+jpreceq|≼
+jsucceq|≽
+jnleq|≨
+jngeq|≩
+jsqsubset|⊏
+jsqsupset|⊐
+jsubseteq|⊑
+jsupseteq|⊒
+jin|∈
+jnin|∉
+jni|∋
+jnni|∌
+jneq|≠
+jdoteq|≐
+jbotdoteq|⩦
+jbigeq|⚌
+jcirceq|≗
+jtpeq|≘
+jbpeq|≚
+jdeltaeq|≜
+jcorresponds|≙
+jasteq|≛
+jqmeq|≟
+jdotplus|∔
+jplusdot|⨥
+jdotminus|∸
+jminusdot|⨪
+jdottimes|⨰
+jdotsim|⸞
+jsimdot|⸟
+jdotless|⋖
+jdotgreater|⋗
+jdotsubset|⪽
+jdotsupset|⪾
+jzsemi|⨟
+jcirplus|⨢
+jhatplus|⨣
+jsimplus|⨤
+jbarelem|⋷
+jequiv|≡
+jnequiv|≢
+jsequiv|≣
+jsim|∼
+jsimeq|≃
+jnsimeq|≄
+jcong|≅
+jncong|≇
+japprox|≈
+jnapprox|≉
+japproxeq|≊
+jtriangleright|▷
+jtriangleleft|◁
+jblacktriangleright|▶
+jblacktriangleleft|◀
+jsmblksquare|▪
+jsmwhtsquare|▫
+jder|⊦
+jrightassert|⊦
+jvdash|⊢
+jdashv|⊣
+jVdash|⊩
+jVvdash|⊪
+jmodels|⊧
+jModels|⊫
+jtop|⊤
+jbot|⊥
+jneg|¬
+jforall|∀
+jexists|∃
+jnexists|∄
+jbox|□
+jsquare|□
+jdiamond|⋄
+jes|∅
+jemptyset|∅
+jaleph|א
+jinfty|∞
+jsum|∑
+jprod|∏
+jcoprod|∐
+jamalg|∐
+jcomp|∁
+jcomplement|∁
+jsm|∖
+jsetminus|∖
+jcolon|∶
+jzcolon|⦂
+jcoloneq|≔
+jeqcolon|≕
+jlparen|(
+jrparen|)
+jllparen|⸨
+jrrparen|⸩
+jlwparen|⦅
+jrwparen|⦆
+jlbparen|⦇
+jrbparen|⦈
+jlhparen|❪
+jrhparen|❫
+jlangle|⟨
+jrangle|⟩
+jllangle|⟪
+jrrangle|⟫
+jrbangle|⦉
+jlbangle|⦊
+jlhangle|❮
+jrhangle|❯
+jlbracket|[
+jrbracket|]
+jllbracket|⟦
+jrrbracket|⟧
+jlmbracket|⁅
+jrmbracket|⁆
+jlubracket|⦋
+jrubracket|⦌
+jlbrace|{
+jrbrace|}
+jlbbrace|⦃
+jrbbrace|⦄
+jlhbrace|❴
+jrhbrace|❵
+jlflat|⟮
+jrflat|⟯
+jllflat|⟬
+jrrflat|⟭
+jlfence|⧘
+jrfence|⧙
+jlceil|⌈
+jrceil|⌉
+jlfloor|⌊
+jrfloor|⌋
+julcorner|⌜
+jurcorner|⌝
+jllcorner|⌞
+jlrcorner|⌟
+jldots|…
+jvdots|⋮
+jN|ℕ
+jZ|ℤ
+jQ|ℚ
+jR|ℝ
+jC|ℂ
+jB|ℬ
+jpow|℘
+jAlpha|Α
+jBeta|Β
+jGamma|Γ
+jDelta|Δ
+jEpsilon|Ε
+jZeta|Ζ
+jEta|Η
+jTheta|Θ
+jIota|Ι
+jKappa|Κ
+jLambda|Λ
+jMu|Μ
+jNu|Ν
+jXi|Ξ
+jOmikron|Ο
+jPi|Π
+jRho|Ρ
+jSigma|Σ
+jTau|Τ
+jUpsilon|Υ
+jPhi|Φ
+jChi|Χ
+jPsi|Ψ
+jOmega|Ω
+jalpha|α
+jbeta|β
+jgamma|γ
+jdelta|δ
+jepsilon|ε
+jzeta|ζ
+jeta|η
+jtheta|ϑ
+jiota|ι
+jkappa|κ
+jlambda|λ
+jmu|μ
+jnu|ν
+jxi|ξ
+jomikron|ο
+jpi|π
+jrho|ρ
+jsigma|σ
+jtau|τ
+jupsilon|υ
+jphi|φ
+jchi|χ
+jpsi|ψ
+jomega|ω
+jsuper0|⁰
+jsuper1|¹  
+jsuper2|²
+jsuper3|³
+jsuper4|⁴
+jsuper5|⁵
+jsuper6|⁶
+jsuper7|⁷
+jsuper8|⁸
+jsuper9|⁹
+jsuperplus|⁺
+jsuperminus|⁻
+jsuperequal|⁼
+jsuperopen|⁽
+jsuperclose|⁾
+jsub0|₀
+jsub1|₁
+jsub2|₂
+jsub3|₃
+jsub4|₄
+jsub5|₅
+jsub6|₆
+jsub7|₇
+jsub8|₈
+jsub9|₉
+jsubplus|₊
+jsubminus|₋
+jsubequal|₌
+jsubopen|₍
+jsubclose|₎
+jprec|≺
+jpreceq|≼
+jsucc|≻
+jsucceq|≽
+jnabla|∇
+jpartial|∂
+jdagger|†
+jint|∫
+joint|∮
+jln|㏑
+jperp|⟂
+jparallel|∥
+jnparallel|∦
+jURI|☞
+// some of these have length 2 in Java and won't work everywhere
+jU|𝒰
+jcalA|𝒜
+jcalB|ℬ
+jcalC|𝒞
+jcalD|𝒟
+jcalE|ℰ
+jcalF|ℱ
+jcalG|𝒢
+jcalH|ℋ
+jcalI|ℐ
+jcalJ|𝒥
+jcalK|𝒦
+jcalL|ℒ
+jcalM|ℳ
+jcalN|𝒩
+jcalO|𝒪
+jcalP|𝒫
+jcalQ|𝒬
+jcalR|ℛ
+jcalS|𝒮
+jcalT|𝒯
+jcalU|𝒰
+jcalV|𝒱
+jcalW|𝒲
+jcalX|𝒳
+jcalY|𝒴
+jcalZ|𝒵
+jbbA|𝔸
+jbbB|𝔹
+jbbC|ℂ
+jbbD|𝔻
+jbbE|𝔼
+jbbF|𝔽
+jbbG|𝔾
+jbbH|ℍ
+jbbI|𝕀
+jbbJ|𝕁
+jbbK|𝕂
+jbbL|𝕃
+jbbM|𝕄
+jbbN|ℕ
+jbbO|𝕆
+jbbP|ℙ
+jbbQ|ℚ
+jbbR|ℝ
+jbbS|𝕊
+jbbT|𝕋
+jbbU|𝕌
+jbbV|𝕍
+jbbW|𝕎
+jbbX|𝕏
+jbbY|𝕐
+jbbZ|ℤ`;
+}
+</script>
+
+</article>
+
+</body>
+</html>
