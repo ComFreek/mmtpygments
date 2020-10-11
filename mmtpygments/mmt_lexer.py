@@ -19,7 +19,8 @@ from pygments.token import Comment, Generic, Keyword, Literal, \
 __all__ = ['MMTLexer']
 
 # This value will be set to True by the almost immediate __main__ entrypoint below
-# if the current invocation of Python is in order to convert this lexer to Rouge.
+# if the current invocation of Python is in order to convert this lexer to some
+# other lexing/syntax highlighting framework.
 #
 # It changes the behavior of the bygroups wrapper directly below:
 # upon conversion mode, the bygroups arguments are simply output as a tuple itself
@@ -56,8 +57,11 @@ class MMTLexer(RegexLexer):
 	filenames = ['*.mmt', '*.mmtx']
 	mimetypes = ['application/x-mmt']
 
-	rouge_lexer_original_source = "https://github.com/ComFreek/mmtpygments"
-	rouge_lexer_description = "MMT Surface Syntax"
+	rouge_name = 'MMT'
+	rouge_title = 'mmt'
+	rouge_tag = 'mmt'
+	rouge_description = "MMT Surface Syntax"
+	rouge_original_source = "https://github.com/ComFreek/mmtpygments"
 
 	flags = re.DOTALL | re.UNICODE | re.IGNORECASE | re.MULTILINE
 
@@ -403,17 +407,18 @@ if __name__ == "__main__":
 	
 	# if you change the conditions here, also change it way above the MMTLexer class
 	# in the code snippet that sets IS_CONVERSION_MODE to true.
-	elif len(sys.argv) == 3 and sys.argv[1] == 'convert':
-		from pygments_to_rouge import convert_pygments_regex_lexer
+	elif len(sys.argv) == 4 and sys.argv[1] == 'convert':
+		if sys.argv[2] == 'rouge':
+			from pygments_to_rouge import PygmentsToRougeConverter
+			converter = PygmentsToRougeConverter()
+		elif sys.argv[2] == 'codemirror':
+			pass
 
-		out_filename = sys.argv[2]
+		out_filename = sys.argv[3]
 	
-		with io.open(out_filename, mode="w", newline="\n", encoding="utf-8") as ruby_lexer:
-			ruby_lexer.write(convert_pygments_regex_lexer(
-				MMTLexer,
-				rouge_lexer_name = 'MMT',
-				rouge_title = 'mmt',
-				rouge_tag = 'mmt'
+		with io.open(out_filename, mode="w", newline="\n", encoding="utf-8") as converted_lexer:
+			converted_lexer.write(converter.transform(
+				MMTLexer
 			))
 		print('Successfully converted, see `{}`'.format(out_filename))
 	else:
@@ -421,6 +426,7 @@ if __name__ == "__main__":
 		print(" a) `{} debug in-filename` to debug this Pygments lexer`".format(sys.argv[0]))
 		print("    It will be read in UTF-8 encoding and lexed through our parser.")
 		print("")
-		print(" b) `{} convert out-filename` to convert this Pygments lexer to a Rouge lexer".format(sys.argv[0]))
+		print(" b) `{} convert rouge out-filename` to convert this Pygments lexer to a Rouge lexer".format(sys.argv[0]))
+		print(" c) `{} convert codemirror out-filename` to convert this Pygments lexer to a CodeMirror lexer (aka 'CodeMirror mode')".format(sys.argv[0]))
 
 		sys.exit(1)
