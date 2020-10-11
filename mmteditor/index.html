@@ -4,11 +4,12 @@
 <meta charset="utf-8"/>
 
 <link rel="stylesheet" href="../exports/CodeMirror/lib/codemirror.css">
-<link rel="stylesheet" href="../exports/CodeMirror/addon/hint/show-hint.min.css">
+<link rel="stylesheet" href="../exports/CodeMirror/theme/dracula.css">
+<link rel="stylesheet" href="../exports/CodeMirror/addon/hint/show-hint.css">
 
 <!-- vvv update the version here if you update the ../exports/CodeMirror Git submodule -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.min.js"></script>
-<script src="../exports/CodeMirror/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.js"></script>
+<script src="../exports/CodeMirror/addon/hint/show-hint.js"></script>
 
 <script src="../exports/CodeMirror/addon/mode/advanced.js"></script>
 <script src="../exports/CodeMirror/mode/mmt/mmt.js"></script>
@@ -41,63 +42,65 @@ view v : ?S -> ?T =
 
 <script>
 function loadAbbreviations() {
-  return new Map(
-    getRawAbbreviations()
-      .split('\n')
-      .filter(line => line != '' && !line.startsWith('//'))
-      .map(line => line.split('|'))
-  );
+	return new Map(
+		getRawAbbreviations()
+			.split('\n')
+			.filter(line => line != '' && !line.startsWith('//'))
+			.map(line => line.split('|'))
+	);
 }
 
 const abbreviations = loadAbbreviations();
 const Pos = CodeMirror.Pos;
 
 function findMatchingAbbreviations(str, cursorLine, tokenEndCh) {
-  console.log(str);
-  str = str.toLowerCase();
+	console.log(str);
+	str = str.toLowerCase();
 
-  const matches = [];
+	const matches = [];
 
-  for (const [abbrKey, abbrValue] of abbreviations.entries()) {
-    const caseInsensitiveAbbrKey = abbrKey.toLowerCase();
+	for (const [abbrKey, abbrValue] of abbreviations.entries()) {
+		const caseInsensitiveAbbrKey = abbrKey.toLowerCase();
 
-    for (let i = 0; i < abbrKey.length; i++) {
-      if (str.endsWith(caseInsensitiveAbbrKey.slice(0, i + 1))) {
-        matches.push({
-          text: abbrValue,
-          displayText: `${abbrValue}\t\t${abbrKey}`,
-          from: Pos(cursorLine, tokenEndCh - (i + 1)),
-          to: Pos(cursorLine, tokenEndCh)
-        });
-      }
-    }
-  }
+		for (let i = 0; i < abbrKey.length; i++) {
+			if (str.endsWith(caseInsensitiveAbbrKey.slice(0, i + 1))) {
+				matches.push({
+					text: abbrValue,
+					displayText: `${abbrValue}\t\t${abbrKey}`,
+					from: Pos(cursorLine, tokenEndCh - (i + 1)),
+					to: Pos(cursorLine, tokenEndCh)
+				});
+			}
+		}
+	}
 
-  return matches;
+	return matches;
 }
 
 CodeMirror.registerHelper("hint", "mmt", function(editor, options) {
-  // Find the token at the cursor
-  var cur = editor.getCursor();
-  var token = editor.getTokenAt(cur);
+	// Find the token at the cursor
+	var cur = editor.getCursor();
+	console.log(cur);
+	var token = editor.getTokenAt(cur);
 
-  const matchingAbbreviations = findMatchingAbbreviations(token.string, cur.line, token.end);
-  return {
-    list: matchingAbbreviations,
-    from: Pos(cur.line, token.start),
-    to: Pos(cur.line, token.end)
-  };
+	const matchingAbbreviations = findMatchingAbbreviations(token.string, cur.line, token.end);
+	return {
+		list: matchingAbbreviations,
+		from: Pos(cur.line, token.start),
+		to: Pos(cur.line, token.end)
+	};
 });
 
 
 const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-  mode: "mmt",
-  lineNumbers: true,
-  extraKeys: {"Ctrl-Space": "autocomplete"}
+	mode: "mmt",
+	lineNumbers: true,
+	extraKeys: {"Ctrl-Space": "autocomplete"}
 });
+editor.setOption("theme", "dracula");
 
 function getRawAbbreviations() {
-  return `jMD|❚
+	return `jMD|❚
 jDD|❙
 jOD|❘
 jsharp|♯
@@ -427,7 +430,7 @@ jchi|χ
 jpsi|ψ
 jomega|ω
 jsuper0|⁰
-jsuper1|¹  
+jsuper1|¹
 jsuper2|²
 jsuper3|³
 jsuper4|⁴
