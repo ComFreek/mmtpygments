@@ -28,3 +28,11 @@
 	path = mmtpygments/test/data/MathHub/MitM/core
 	url = https://gl.mathhub.info/MitM/core.git
 	ignore = untracked
+[submodule "exports/codemirror"]
+	path = exports/codemirror
+	url = https://github.com/ComFreek/CodeMirror.git
+	branch = feature.mmt
+[submodule "exports/rouge"]
+	path = exports/rouge
+	url = https://github.com/ComFreek/rouge.git
+	branch = feature.mmt

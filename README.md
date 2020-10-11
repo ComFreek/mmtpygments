@@ -96,6 +96,11 @@ If you tab characters in the MMT source being highlighted and they are shown in 
 
 ![image](https://user-images.githubusercontent.com/1827709/59755955-23c81200-9289-11e9-92c5-1659b60d03d1.png)
 
+## Exports to CodeMirror & Rouge Lexers
+
+- `cd mmtpygments && pipenv run python ./mmt_lexer.py convert codemirror ../exports/codemirror/mode/mmt/mmt.js`
+- `cd mmtpygments && pipenv run python ./mmt_lexer.py convert rouge ../exports/rouge/lib/rouge/lexers/mmt.rb`
+
 ## Development
 
 1. Install [pipenv](https://github.com/pypa/pipenv), which provides a consistent Python, pip and package environment locked in the committed `Pipfile` and `Pipfile.lock` files.
