@@ -46,49 +46,7 @@ This tells Pygments to use the HTML formatter (`-f`), the MMT lexer (`-l`) and t
 
 ### LaTeX (with minted)
 
-[minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments as the backend.
-
-```tex
-% !TeX encoding = UTF-8
-% !TEX TS-program = latexmk -xelatex -shell-escape -silent -latexoption="-synctex=1 -8bit" %
-%
-% ^^^ This is the build command. Install latexmk if you don't have it already.
-%     You may choose an alternative LaTeX derivative, e.g. LuaLaTeX, but be warned that it must support Unicode!
-
-\documentclass{article}
-
-\usepackage{fontspec}
-
-% Download GNU Unifont from http://unifoundry.com/unifont/index.html
-% And save it, say, as "fonts/unifont-12.1.03.ttf"
-\newfontfamily\unifont{unifont-12.1.03.ttf}[Path=./fonts/,NFSSFamily=unifont]
-
-% Disable caching for debugging purposes (increases compilation times!)
-\usepackage[cache=false]{minted}
-\setminted{fontfamily=unifont,tabsize=2,breaklines=true}
-
-\newminted[mmtcode]{mmt}{}
-\newmintinline[mmtinline]{mmt}{}
-\newmintedfile[mmtfile]{mmt}{}
-
-\begin{document}
-	% Variant 1: Code given in LaTeX, rendered in display mode
-	\begin{mmtcode}
-theory MyTheory = c : type ❘ # abc ❙❚
-	\end{mmtcode}
-
-	% Variant 2: Code given in LaTeX, rendered inline
-	% You can use any delimiter you like, here we use /
-	\mmtinline/theory MyTheory = c : type ❘ # abc ❙❚/
-
-	% Variant 3: Code given externally in file, rendered in display mode
-	% \mmtfile{your-mmt-file.mmt}
-\end{document}
-```
-
-**LaTeX Beamer**: Use the `fragile` option for frames embedding codes: `\begin{frame}[fragile] ... \end{frame}`
-
-See the [minted manual](https://ctan.org/pkg/minted) for more information on how to customize it.
+See `examples/latex`.
 
 #### Common Error: Rendered PDF shows tab characters of source
 
