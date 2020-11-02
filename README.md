@@ -16,48 +16,18 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 **Screenshot:** (click for live version)<br>
 [![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/82438710-c7253680-9a99-11ea-97c9-8da8f715ac14.png)](https://comfreek.github.io/mmtpygments/mmtpygments/test/data/readme-showoff-example.mmt.html)
 
-## Installation
+## Highlighting MMT code in LaTeX Documents
 
-- via Pip (easy)
+See readme in [./examples/latex](./examples/latex).
 
-    ```
-    pip install Pygments mmtpygments
-    ```
+## Highlighting from Command Line (for devs)
 
-- via `pipenv` or other Python package managers superior to Pip:
+1. `pipenv install pygments mmtpygments` in your project directory
+2. `pipenv run pygmentize -f html -l mmt -O full,style=mmtdefault -o test.html test.mmt`
 
-    1. Run `pipenv install pygments mmtpygments` in your project directory, e.g. containing the LaTeX files in which you'd like to use this
-	2. Remember to use `mmtpygments` from now on always in that virtual environment context: run your intended command within `pipenv shell`
+   This tells Pygments to use the HTML formatter (`-f`), the MMT lexer (`-l`) and to output a full HTML file using the `mmtdefault` style (`-O`) rendered of `test.mmt` into `test.html` (`-o`).
 
-	   For example, if you'd like to use this in LaTeX and use TeXStudio as an IDE, start TeXStudio from within that shell.
-	   
-    This way, you don't clutter your whole PC with the Pip packages *and* more importantly, you document the Pip package versions in the `Pipfile.lock` file generated in step (2.1).
-
-## Usage
-
-### CLI
-
-```
-pygmentize -f html -l mmt -O full,style=mmtdefault -o test.html test.mmt
-```
-
-This tells Pygments to use the HTML formatter (`-f`), the MMT lexer (`-l`) and to output a full HTML file using the `mmtdefault` style (`-O`) rendered of `test.mmt` into `test.html` (`-o`).
-
-
-### LaTeX (with minted)
-
-See `examples/latex`.
-
-#### Common Error: Rendered PDF shows tab characters of source
-
-If you tab characters in the MMT source being highlighted and they are shown in the PDF rendered by XeLaTeX, you face a known bug of XeLaTeX ([\[1\]](https://tex.stackexchange.com/a/36872/38074), [\[2\]](https://tex.stackexchange.com/a/14776/38074)). It can be solved by passing `-8bit` to XeLaTeX.
-
-![image](https://user-images.githubusercontent.com/1827709/59755955-23c81200-9289-11e9-92c5-1659b60d03d1.png)
-
-## Exports to CodeMirror & Rouge Lexers
-
-- `cd mmtpygments && pipenv run python ./mmt_lexer.py convert codemirror ../exports/codemirror/mode/mmt/mmt.js`
-- `cd mmtpygments && pipenv run python ./mmt_lexer.py convert rouge ../exports/rouge/lib/rouge/lexers/mmt.rb`
+<hr>
 
 ## Development
 
@@ -65,6 +35,11 @@ If you tab characters in the MMT source being highlighted and they are shown in 
 2. `pipenv install`
 3. `git submodule init`
 4. `git submodule update`
+
+## Exports to CodeMirror & Rouge Lexers
+
+- `cd mmtpygments && pipenv run python ./mmt_lexer.py convert codemirror ../exports/codemirror/mode/mmt/mmt.js`
+- `cd mmtpygments && pipenv run python ./mmt_lexer.py convert rouge ../exports/rouge/lib/rouge/lexers/mmt.rb`
 
 ### Testing
 
@@ -80,7 +55,7 @@ The Travis build automatically runs [`test.py`](mmtpygments/test/test.py) and de
 
 For tinkering and testing the lexer, it is recommended to employ the same testing infrastructure as described above. Even though the Travis build fails on lexing error, [`test.py`](mmtpygments/test/test.py) actually doesn't -- it just returns a non-zero exit code. In fact, it even generates the HTML renderings with red rectangles around lexing errors. Hence, while tinkering with the lexer, just regularly run [`test.py`](mmtpygments/test/test.py) and look at the `index.html` locally in your browser to see any errors.
 
-## Publishing
+### Publishing
 
 Publishing is done automatically via [.travis.yml](./.travis.yml) upon tagged commits on the master branch. For that do
 
@@ -104,7 +79,7 @@ $ pipenv run twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 $ pipenv run twine upload dist/*
 ```
 
-## For future maintainers: necessary changes in case of repository movement
+### For future maintainers: necessary changes in case of repository movement
 
 In case you wish to host this repository or a fork thereof somewhere else, these are the places where you have to make changes:
 
