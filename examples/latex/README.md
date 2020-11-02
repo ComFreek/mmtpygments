@@ -6,14 +6,16 @@ Crucially, this means that while typesetting you are *dependent* on a Python and
 
 The tutorial below will walk you through installation, typesetting a simple document, and preparing an (imaginary) submission-ready LaTeX document.
 
-1. Install [Python](https://www.python.org/) and [pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) if you haven't already. (The second is not strictly required, you can also use mere `pip`; see next point.)
-2. `pipenv install pygments mmtpygments`
+1. Clone this repository/the containing folder of this readme to follow along.
+
+2. Install [Python](https://www.python.org/) and [pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) if you haven't already. (The second is not strictly required, you can also use mere `pip`; see next point.)
+3. `pipenv install pygments mmtpygments`
 
    Alternative way using pip: `pip install --user pygments mmtpygments`. If pip warns you about something not on PATH, be sure to add it to your PATH and to restart your TeX IDE if you have already opened one. 
    However, using a *real* package manager like pipenv is the better option. It will (a) not clutter your user-wide installation of Python packages and (b) manifest the actual installed dependencies in a `Pipfile.lock` file, which makes installations & typesetting (say, of papers) reproducible in the future.
 
-3. In case you chose pipenv, open a terminal and type `pipenv shell`.
-4. Open `main.tex` using your favorite IDE. If you chose pipenv, you need to open it from the "pipenv shell" you just initiated, e.g. on Windows with PowerShell as terminal `& "C:\Program Files (x86)\texstudio\texstudio.exe" "main.tex"`.
+4. In case you chose pipenv, open a terminal and type `pipenv shell`.
+5. Open `main.tex` using your favorite IDE. If you chose pipenv, you need to open it from the "pipenv shell" you just initiated, e.g. on Windows with PowerShell as terminal `& "C:\Program Files (x86)\texstudio\texstudio.exe" "main.tex"`.
 
    For quick reference, here's how you will be including MMT code in your documents:
 
@@ -31,7 +33,7 @@ The tutorial below will walk you through installation, typesetting a simple docu
    \mmtinline/theory MyTheory = c : type ❘ # abc ❙❚/
    ```
 
-5. Compile and run the just opened `main.tex`.
+6. Compile and run the just opened `main.tex`.
 
    Ideally your IDE picks up the `TS-program` TeX magic comment at the beginning of the file. If not, you have to manually configure your IDE to run the command specified in that comment.
 
@@ -41,7 +43,7 @@ The tutorial below will walk you through installation, typesetting a simple docu
      - `-shell-escape`: needed for the minted package to invoke Pygments. In the next point, we see how we can get rid of this.
      - `-8bit`: needed to typeset tabs within verbatim environments correctly. Not needed if you only typeset from external files.
 
-6. To get rid of the dependence on `-shell-escape`, a Python, and a Pygments installation, do:
+7. To get rid of the dependence on `-shell-escape`, a Python, and a Pygments installation, do:
 
    - Compile once uing the `finalizecache=true,frozencache=false` options, e.g.: `\usepackage[finalizecache=true,frozencache=false]{minted}`.
    - Modify again to `finalizecache=false,frozencache=true`, e.g.: `\usepackage[finalizecache=false,frozencache=true]{minted}`. If desired, you can compile now again to see if it's working.
