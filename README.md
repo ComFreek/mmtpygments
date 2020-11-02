@@ -17,7 +17,7 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 <p align="center">
 	<a href="https://comfreek.github.io/mmtpygments/mmtpygments/test/data/readme-showoff-example.mmt.html">
 		<img src="https://user-images.githubusercontent.com/1827709/82438710-c7253680-9a99-11ea-97c9-8da8f715ac14.png" alt="Screenshot of highlighted MMT code"/>
-	</a>
+	</a><br>
 	(click to see live version)
 </p>
 
