@@ -12,7 +12,7 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 - a recommended Pygments style for it (`mmtdefault`)
 - and experimentally a Pygments lexer for MMT relational data (`mmtrel`).
 
-**Tested on 15k lines of code.** [see collection](https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html)<br>
+**Tested on 15k lines of MMT code:** [see collection](https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html)<br>
 
 <p align="center">
 	<a href="https://comfreek.github.io/mmtpygments/mmtpygments/test/data/readme-showoff-example.mmt.html">

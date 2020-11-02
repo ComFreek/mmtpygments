@@ -35,7 +35,7 @@ The tutorial below will walk you through installation, typesetting a simple docu
 
 6. Compile and run the just opened `main.tex`.
 
-   Ideally your IDE picks up the `TS-program` TeX magic comment at the beginning of the file. If not, you have to manually configure your IDE to run the command specified in that comment.
+   Ideally your IDE picks up the `TS-program` TeX magic comments at the beginning of the file (for most IDEs) or the ones at its end (for Emacs). If not, you have to manually configure your IDE to run the command specified in that comment.
 
    Three things are crucial in that command line:
 
