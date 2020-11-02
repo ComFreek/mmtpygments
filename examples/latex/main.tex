@@ -1,19 +1,16 @@
 % !TeX encoding = UTF-8
 % !TEX TS-program = latexmk -xelatex -shell-escape -silent -latexoption="-synctex=1 -8bit" %
 %
-% ^^^ This is the build command. Install latexmk if you don't have it already.
-%     You may choose an alternative LaTeX derivative, e.g. LuaLaTeX, but be warned that it must support Unicode!
-
 \documentclass{article}
 
 \usepackage{fontspec}
-
-% Download GNU Unifont from http://unifoundry.com/unifont/index.html
-% And save it, say, as "fonts/unifont-13.0.03.ttf"
 \newfontfamily\unifont{unifont-13.0.03.ttf}[Path=./fonts/,NFSSFamily=unifont]
 
-% Disable caching for debugging purposes (increases compilation times!)
-\usepackage[cache=false]{minted}
+\usepackage[
+	cachedir=./minted-cache,
+	%finalizecache=true,
+	%frozencache=true,
+]{minted}
 \setminted{fontfamily=unifont,tabsize=2,breaklines=true}
 
 \newminted[mmtcode]{mmt}{}
