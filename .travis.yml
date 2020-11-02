@@ -27,16 +27,6 @@ before_deploy:
 
   # This .gitignore ignores the very .mmt.html output files, hence delete it before deployment to gh-pages
   - rm -f mmtpygments/test/.gitignore
-  
-  # MMT Editor
-  # copy files from exports/codemirror to mmteditor that
-  # index.html uses and that are specific to our endeavor (i.e. not available
-  # on CDNs yet)
-  #
-  - mkdir -p mmteditor/addon/mode
-  - mkdir -p mmteditor/mode/mmt
-  - cp exports/codemirror/addon/mode/advanced.js mmteditor/addon/mode/
-  - cp exports/codemirror/mode/mmt/mmt.js mmteditor/mode/mmt/
 
 deploy:
   - provider: pages
