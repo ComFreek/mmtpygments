@@ -26,6 +26,8 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 
 See readme in [./examples/latex](./examples/latex).
 
+
+
 ## Highlighting from Command Line (for devs)
 
 1. `pipenv install pygments mmtpygments` in your project directory
@@ -42,10 +44,21 @@ See readme in [./examples/latex](./examples/latex).
 3. `git submodule init`
 4. `git submodule update`
 
-## Exports to CodeMirror & Rouge Lexers
+## Exports to CodeMirror, Rouge for use on Website, GitLab
+
+### CodeMirror
 
 - `cd mmtpygments && pipenv run python ./mmt_lexer.py convert codemirror ../exports/codemirror/mode/mmt/mmt.js`
-- `cd mmtpygments && pipenv run python ./mmt_lexer.py convert rouge ../exports/rouge/lib/rouge/lexers/mmt.rb`
+
+TODO: document this better
+
+### Rouge for use on GitLab
+
+1. `cd mmtpygments && pipenv run python ./mmt_lexer.py convert rouge ../exports/rouge/lib/rouge/lexers/mmt.rb`.
+2. On the GitLab server:
+
+   1. Copy the generated Rouge lexer `mmt.rb` to `/opt/gitlab/embedded/lib/ruby/gems/2.6.0/gems/rouge-3.[XX].0/lib/rouge/lexers`.
+   2. Restart GitLab: `gitlab-ctl restart` (might be required multiple times due to some overaggressive caches).
 
 ### Testing
 
