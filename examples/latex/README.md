@@ -1,8 +1,8 @@
 [minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments as the backend.
 
-1. `pipenv install pygments mmtpygments`
+1. `pipenv install pygments mmtpygments` (recommended way; [install pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) if you haven't already)
 
-   Or, if you don't have the package manager `pipenv` which operates on folders, you can instead also do `pip install --user pygments mmtpygments`.
+   Alternative way: if you don't have the package manager `pipenv` which operates on folders, you can instead also do `pip install --user pygments mmtpygments`.
    However, this will clutter your user-wide Python package directory and lead to non-reproducible papers as the versions of the packages are not persisted within the paper folder.
 
 2. In your terminal, run
