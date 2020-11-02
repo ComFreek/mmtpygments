@@ -5,4 +5,10 @@
 *.synctex.gz
 *.xdv
 *.pdf
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.pyg
 minted-cache/

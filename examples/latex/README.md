@@ -1,16 +1,21 @@
-[minted](https://ctan.org/pkg/minted) is a LaTeX package rendering codes with Pygments as the backend.
+# Highlighting MMT Code in LaTeX Documents using `mmtpygments`
 
-1. `pipenv install pygments mmtpygments` (recommended way; [install pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) if you haven't already)
+[`mmtpygments`](./../../) is a source code highlighter for the Pygments framework, which is written in Python.
+The LaTeX package [minted](https://ctan.org/pkg/minted) allows us to use any Pygments highlighter to typeset highlighted code in LaTeX documents.
+Crucially, this means that while typesetting you are *dependent* on a Python and pygments installation. However, there is an easy way to submit a standalone (i.e. independent) version to outsiders (e.g. editors, publishers).
 
-   Alternative way: if you don't have the package manager `pipenv` which operates on folders, you can instead also do `pip install --user pygments mmtpygments`.
-   However, this will clutter your user-wide Python package directory and lead to non-reproducible papers as the versions of the packages are not persisted within the paper folder.
+The tutorial below will walk you through installation, typesetting a simple document, and preparing an (imaginary) submission-ready LaTeX document.
 
-2. In your terminal, run
-   - `pipenv shell`
-   - and then your IDE, e.g. on Windows with PowerShell as terminal `& "C:\Program Files (x86)\texstudio\texstudio.exe" "main.tex"`
+1. Install [Python](https://www.python.org/) and [pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) if you haven't already. (The second is not strictly required, you can also use mere `pip`; see next point.)
+2. `pipenv install pygments mmtpygments`
 
+   Alternative way using pip: `pip install --user pygments mmtpygments`. If pip warns you about something not on PATH, be sure to add it to your PATH and to restart your TeX IDE if you have already opened one. 
+   However, using a *real* package manager like pipenv is the better option. It will (a) not clutter your user-wide installation of Python packages and (b) manifest the actual installed dependencies in a `Pipfile.lock` file, which makes installations & typesetting (say, of papers) reproducible in the future.
 
-3. write LaTeX
+3. In case you chose pipenv, open a terminal and type `pipenv shell`.
+4. Open `main.tex` using your favorite IDE. If you chose pipenv, you need to open it from the "pipenv shell" you just initiated, e.g. on Windows with PowerShell as terminal `& "C:\Program Files (x86)\texstudio\texstudio.exe" "main.tex"`.
+
+   For quick reference, here's how you will be including MMT code in your documents:
 
    ```tex
    \begin{mmtcode}
@@ -26,12 +31,26 @@
    \mmtinline/theory MyTheory = c : type ❘ # abc ❙❚/
    ```
 
-4. Before sending LaTeX sources to outsiders (e.g. editors or publishers):
+5. Compile and run the just opened `main.tex`.
 
- - compile once successfully using `\usepackage[finalizecache=true,frozencache=false]{minted}`
- - modify source to `\usepackage[finalizecache=false,frozencache=true]{minted}`
- - send files (incl. cache files) to outsider
+   Ideally your IDE picks up the `TS-program` TeX magic comment at the beginning of the file. If not, you have to manually configure your IDE to run the command specified in that comment.
 
-**LaTeX Beamer**: Use the `fragile` option for frames embedding codes: `\begin{frame}[fragile] ... \end{frame}`
+   Three things are crucial in that command line:
 
-See the [minted manual](https://ctan.org/pkg/minted) for more information on how to customize it.
+     - `-xelatex`: usage of XeLaTeX (or LuaLaTeX) is required for MMT codes' Unicode characters to work.
+     - `-shell-escape`: needed for the minted package to invoke Pygments. In the next point, we see how we can get rid of this.
+     - `-8bit`: needed to typeset tabs within verbatim environments correctly. Not needed if you only typeset from external files.
+
+6. To get rid of the dependence on `-shell-escape`, a Python, and a Pygments installation, do:
+
+   - Compile once uing the `finalizecache=true,frozencache=false` options, e.g.: `\usepackage[finalizecache=true,frozencache=false]{minted}`.
+   - Modify again to `finalizecache=false,frozencache=true`, e.g.: `\usepackage[finalizecache=false,frozencache=true]{minted}`. If desired, you can compile now again to see if it's working.
+   - Submit all files, incl. cache files, to the editor/publisher/outsider.
+
+See the [minted manual](https://ctan.org/pkg/minted) for more information on how to customize typesetting of code blocks.
+
+## LaTeX Beamer: need fragile option
+
+With Beamer, you need to use the `fragile` option for frames that embed codes: `\begin{frame}[fragile] ... \end{frame}`.
+
+See `slides.tex` for an example.

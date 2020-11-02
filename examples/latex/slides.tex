@@ -1,0 +1,35 @@
+% !TeX encoding = UTF-8
+% !TEX TS-program = latexmk -xelatex -shell-escape -silent -latexoption="-synctex=1 -8bit" %
+%
+\documentclass{beamer}
+
+\usepackage{fontspec}
+\newfontfamily\unifont{unifont-13.0.03.ttf}[Path=./fonts/,NFSSFamily=unifont]
+
+\usepackage[
+	cachedir=./minted-cache,
+	%finalizecache=true,
+	%frozencache=true,
+]{minted}
+\setminted{fontfamily=unifont,tabsize=2,breaklines=true}
+
+\newminted[mmtcode]{mmt}{}
+\newmintinline[mmtinline]{mmt}{}
+\newmintedfile[mmtfile]{mmt}{}
+
+\begin{document}
+	\begin{frame}[fragile]{Using mmtpygments with Beamer}
+		Use the verbatim environment \verb|\begin{mmtcode}...\end{mmtcode}| to produce display code blocks:
+		\begin{mmtcode}
+theory MyTheory =
+	ℕ : type ❙
+	succ : ℕ ⟶ℕ ❘ # S 1❙
+❚
+		\end{mmtcode}
+
+		Using \verb|\mmtfile{filename.mmt}|, you can also embed display code from files:
+		\mmtfile{test.mmt}
+
+		Use the inline verbatim command \verb|\mmtinline/.../| to produce inline code: \mmtinline/theory MyTheory = ℕ : type ❙ succ : ℕ ⟶ℕ ❘ # S 1❙❚/
+	\end{frame}
+\end{document}
