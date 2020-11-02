@@ -26,6 +26,12 @@
    \mmtinline/theory MyTheory = c : type ❘ # abc ❙❚/
    ```
 
+4. Before sending LaTeX sources to outsiders (e.g. editors or publishers):
+
+ - compile once successfully using `\usepackage[finalizecache=true,frozencache=false]{minted}`
+ - modify source to `\usepackage[finalizecache=false,frozencache=true]{minted}`
+ - send files (incl. cache files) to outsider
+
 **LaTeX Beamer**: Use the `fragile` option for frames embedding codes: `\begin{frame}[fragile] ... \end{frame}`
 
 See the [minted manual](https://ctan.org/pkg/minted) for more information on how to customize it.
