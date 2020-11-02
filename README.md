@@ -12,9 +12,15 @@ To support syntax highlighting of the [MMT Surface Syntax](https://uniformal.git
 - a recommended Pygments style for it (`mmtdefault`)
 - and experimentally a Pygments lexer for MMT relational data (`mmtrel`).
 
-**Collection of rendered codes:** [click here](https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html)<br>
-**Screenshot:** (click for live version)<br>
-[![Screenshot of highlighted MMT code](https://user-images.githubusercontent.com/1827709/82438710-c7253680-9a99-11ea-97c9-8da8f715ac14.png)](https://comfreek.github.io/mmtpygments/mmtpygments/test/data/readme-showoff-example.mmt.html)
+**Tested on 15k lines of code.** [see collection](https://comfreek.github.io/mmtpygments/mmtpygments/test/index.html)<br>
+
+<p align="center">
+	<a href="https://comfreek.github.io/mmtpygments/mmtpygments/test/data/readme-showoff-example.mmt.html">
+		<img src="https://user-images.githubusercontent.com/1827709/82438710-c7253680-9a99-11ea-97c9-8da8f715ac14.png" alt="Screenshot of highlighted MMT code"/>
+	</a>
+	(click to see live version)
+</p>
+
 
 ## Highlighting MMT code in LaTeX Documents
 

@@ -43,9 +43,9 @@ The tutorial below will walk you through installation, typesetting a simple docu
      - `-shell-escape`: needed for the minted package to invoke Pygments. In the next point, we see how we can get rid of this.
      - `-8bit`: needed to typeset tabs within verbatim environments correctly. Not needed if you only typeset from external files.
 
-       Otherwise, tabs will typeset in a weird way. This is a known bug of XeLaTeX, see [here](https://tex.stackexchange.com/a/36872/38074) and [here](https://tex.stackexchange.com/a/14776/38074).
+       Otherwise, tabs will typeset in the weird way below. This is a known bug of XeLaTeX, see [here](https://tex.stackexchange.com/a/36872/38074) and [here](https://tex.stackexchange.com/a/14776/38074).
 
-![image](https://user-images.githubusercontent.com/1827709/59755955-23c81200-9289-11e9-92c5-1659b60d03d1.png)
+       ![Weird typeset tabs as `^^I`](https://user-images.githubusercontent.com/1827709/59755955-23c81200-9289-11e9-92c5-1659b60d03d1.png)
 
 7. To get rid of the dependence on `-shell-escape`, a Python, and a Pygments installation, do:
 
