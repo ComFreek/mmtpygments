@@ -1,0 +1,43 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		E550D6AA16371AF600A003E9 /* Aggregate */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = E550D6AB16371AF600A003E9 /* Build configuration list for PBXAggregateTarget "Aggregate" */;
+			buildPhases = (
+				E550D8F8163733DE00A003E9 /* CopyFiles */,
+				E550D8F9163733DF00A003E9 /* ShellScript */,
+			);
+			dependencies = (
+				E550D6AF16371AFC00A003E9 /* PBXTargetDependency */,
+			);
+			name = Aggregate;
+			productName = Aggregate;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		806F6FB717EFAF46001051EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E52523D016245A910012E2BA /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		E552E0F716263967003ED1FE /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.css";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_BASE}.css.c",
+			);
+			script = "test\n";
+		};
+/* End PBXBuildRule section */
+	}
+}

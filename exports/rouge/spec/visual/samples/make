@@ -1,0 +1,114 @@
+# A comment
+
+VERSION := 0.1.$(shell git log --oneline | wc -l | sed -e "s/ //g")
+
+# Simple assignments
+LIST=			Parser Grammar Objects Python Modules Mac
+STRING=			'--with-pydebug'
+NUMBER=			2.6
+DOT=			.
+DIR=			/usr/local
+DIR_LIST=		Modules/threadmodule.o  Modules/signalmodule.o 
+CMD_WITH_SWITCH=	gcc -pthread
+DIR_WITH_SWITCH=	/usr/bin/install -c
+ALL_SWITCHES=		-g -Wall -Wstrict-prototypes
+EMPTY=
+
+# Interpolation
+SINGLE_PARENS=		$(CC)
+MULTI_PARENS=		$(LOCALMODLIBS) $(BASEMODLIBS)
+CMD_AND_PARENS=		svnversion $(srcdir)
+DIR_AND_PARENS=		$(srcdir)/Modules/makesetup
+BRACES=			${INSTALL}
+DIR_AND_BRACES==	${prefix}/man
+BRACES_AND_SWITCH=	${INSTALL} -m 644
+
+# Multiline assignment
+MULTI=	\
+	Modules/config.o \
+	Modules/getpath.o \
+	Modules/main.o \
+	Modules/gcmodule.o
+
+MULTI_WITH_PARENS=	\
+	Modules/getbuildinfo.o \
+	$(PARSER_OBJS) \
+	$(OBJECT_OBJS)
+
+# Definition
+simple:			$(BUILDPYTHON) oldsharedmods sharedmods
+$(interpol):		Modules/python.o $(LIBRARY) $(LDLIBRARY)
+multi dir/file.c:	Makefile.pre \
+			Modules/Setup.local
+
+# Commands
+commands: $(SHELL) $(MAKESETUP) -c $(srcdir)/Modules/config.c.in
+	@echo "The Makefile was updated, you may need to re-run make."
+
+commands/complex: $(srcdir)/Modules/Setup.dist
+	@if test -f Modules/Setup; then \
+		echo "-----------------------------------------------"; \
+	fi
+
+commands_switch:	all platform
+			-find $(srcdir)/Lib -name '*.py[co]' -print | xargs rm -f
+
+frameworkaltinstallunixtools:
+	cd Mac && $(MAKE) altinstallunixtools DESTDIR="$(DESTDIR)"
+
+include SubMake.make # Insert lines from another file (which must exist)
+-include Maybe.make  # Next 2 similar, but not an error if they doon't exist
+sinclude DynamicDependencies.make
+
+# Function expansions (including $(shell)) can occur anywhere
+$(shell echo VARIABLE) := $(shell echo value)
+
+$(shell echo $(TARGET1)) $(TARGET2) target3: \
+	$(shell echo $(DEPENDENCY1)) $(DEPENDENCY2) dependency3
+	touch $(shell echo target{1..3})
+	@echo $(shell echo 1)
+	@echo $(shell echo 2 )
+	@echo ${shell echo 3}
+	@echo ${shell echo 4 }
+
+# Many other built-in functions exist
+OBJECT_GOALS = $(filter %.o,${MAKECMDGOALS})
+
+# User-defined functions can be used via $(call)
+reverse = $(2) $(1)
+foo = $(call reverse,a,b) # foo contains 'b a'
+
+# Substitution references can be used when expanding variables
+SOURCE = $(OBJECT:.o=.c)
+
+# Alternative syntax for substitution references
+foo = input1.txt
+bar = $(foo:input%.txt=output%.bin) # set to 'output1.bin'
+
+# Conditionals
+ifdef THING
+THING2 = $(THING)
+else
+THING2 = default
+endif
+
+ifeq ($(TARGET),special) # syntax variant: parentheses and separating comma
+TARGET = something_else
+else
+	ifneq '$(TARGET)' "don't" # syntax variant: either argument can be single or double quoted
+TARGET = be_silly
+	endif # and can be indented, even with tabs (so long as not in a recipe)
+endif
+
+count:
+	echo one
+	echo two
+ifndef QUIET # conditionals can happen within recipes
+	echo miss a few
+endif
+	echo one hundred
+
+# Dollars must be escaped if a literal one is required
+
+print_path:
+	echo $$PATH

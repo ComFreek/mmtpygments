@@ -1,0 +1,32 @@
+<style type="text/css">
+  main {
+    padding: 15px;
+    column-count: 2;
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+  }
+  .preview {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 15px;
+    width: 100%;
+    color: <%= @comment_color %>;
+    border: 1px dotted;
+    break-inside: avoid-column;
+    -webkit-column-break-inside: avoid;
+  }
+</style>
+
+<header id="page-header">
+  <h1>Lexers supported by Rouge v<%= Rouge.version %></h1>
+</header>
+<main>
+  <% @samples.each do |sample| %>
+    <section class="preview">
+      <header class="section-header">
+        <h2><a href="/<%= sample.tag %>"><%= sample.tag %></a></h2>
+      </header>
+      <%= Rouge.highlight(sample.demo, sample, @formatter) %>
+    </section>
+  <% end %>
+</main>

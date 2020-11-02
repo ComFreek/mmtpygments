@@ -1,0 +1,177 @@
+#! /usr/bin/env perl
+
+# common regex delimiters
+sub substitutionOperator
+{
+    s!\\!\\\\!g;
+    s!\\!\\\\!g;
+    s!"!\\"!g;
+    s!\(!\\\(!g;
+    s!\)!\\\)!g;
+}
+
+$a =~ s/foo/bar/;
+$b =~ s!foo!bar!;
+$c =~ s@foo@bar@;
+$d =~ s\foo\bar\;
+
+# balanced regex delimiters
+$e =~ s{foo}{bar};
+$f =~ s(foo)(bar);
+$g =~ s<foo><bar>;
+$h =~ s[foo][bar];
+
+# balanced regex delimiters with whitespace
+$i =~ s{foo} {bar};
+$j =~ s<foo>		<bar>;
+$k =~
+	s(foo)
+
+	(bar);
+$l =~ s{foo} <bar>;
+$m =~ s(foo) !bar!;
+$n =~ s[foo] $bar$;
+
+# /x modifier after regex delimiters
+$o =~ s{
+				foo
+			 } {bar}x;
+$p =~ s%
+  foo
+  %bar%x;
+  #
+# arbitrary regex delimiters
+my $re_1 = m,This should match,;
+my $re_2 = m aSo should thisa;
+if $filename and $filename =~ m,usr/share/doc/[^/]+/examples/,;
+
+# keys in hashes aren't match as regular expressions
+my %countries =  ( england => 'English',
+                   france => 'French',
+                   spain => 'Spanish',
+                   china => 'Chinese',
+                   germany => 'German',
+                   mozambique => 'Mozambican');
+
+# transliterations
+say "food" =~ tr/o/e/r;
+$r =~ tr ^y^z^;
+$s =~ y/[]|/()&/; # "backward" compatible
+
+
+# quoted strings
+my $a = 'foo';
+my $a = 'foo\'s bar';
+my $a = 'foo\bar';
+my $a = 'foo\\bar';
+my $a = "foo";
+my $a = "foo \" bar";
+my $a = "foo\bar";
+my $a = "foo \057 \x7f \x{263a} \cC \N{GREEK SMALL LETTER SIGMA} bar";
+my $a = "invalid escape \w";
+
+print "a: ";
+print $a, " - ";
+print $a, "\n";
+
+my $str1 = "This is a ${ string } with fancy interpolation."
+my $cmd1 = `So is @{ this } one.`
+my $str2 = "This is a $string with plain interpolation."
+my $cmd2 = `So is @this one.`
+my $str3 = 'A boring $string.'
+
+my @w = ( q!str4!, qw< str5 str6 >, qq(str7 $str1), qx`false`, qr/foo/ );
+$a = qr/bar/i;
+my %x = ( q_ThisString => "doesnt_overrun as if it were q-quoted" );
+
+# from http://gist.github.com/485595
+use strict;
+use warnings;
+use Time::HiRes 'usleep';
+
+for (1..5) {
+    open my $in, '<', '/proc/sys/kernel/random/entropy_avail' or die;
+    print <$in>;
+    close $in;
+    usleep 100_000;
+}
+
+# other miscellaneous tests of numbers separated by _
+usleep 100_000;
+100_000_000;
+my $nichts = 0.005_006;
+print 900_800_700.005_006_007, $/;
+
+# numbers from `man 1 perlnumber`
+my $n;
+$n = 1234;              # decimal integer
+$n = 0b1110011;         # binary integer
+$n = 01234;             # octal integer
+$n = 0x1234;            # hexadecimal integer
+$n = 12.34e-56;         # exponential notation
+$n = "-12.34e56";       # number specified as a string
+$n = "1234";            # number specified as a string
+
+# other numbers
+for (
+    -9876,
+    +8765,
+    -9876.02,
+    -9876.02e+10,
+    +765_432e30,
+    2002.,
+    .2002,
+) {
+    print $_, "\n";
+}
+
+# operators on numbers
+for (
+    $n + 300,
+    $n - 300,
+    $n / 300 + 10,
+    $n * 250 / 2.0,
+    $n == 100,
+    $n != 100,
+    $n > 100,
+    $n >= 100,
+    $n < 100,
+    $n <= 100,
+    $n % 2,
+    abs $n,
+) {
+    print $_, "\n";
+}
+
+=head1 Single Quote Breaker
+
+That's all folks
+
+=cut
+
+sub foo {
+    "after the POD with the single quote, it's all still good"
+}
+
+# operators
+my $moduloOperation = $totalNumber % $columns ? 1 : 0;
+$moduloOperation = 2;
+my $addOperation = $totalNumber + $myOtherVar;
+
+sub __END__but_not_really { 1 }
+
+# fat commas
+use constant EMPTY_SPACE => '&nbsp;';
+my %h = ( FOO => 23 );
+$text = format_text({FOO => 23, BAR => 30});
+foo(
+  sub # comment
+      # second comment
+    => 1
+)
+
+__DATA__
+
+This is just some end text; everything after DATA can be accessed
+by the <DATA> filehandle.  __END__ does the same thing, without the
+filehandle, but we can't test both in the same file.

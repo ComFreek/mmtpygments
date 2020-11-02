@@ -1,0 +1,18 @@
+# it's a gem, ignore the lockfile
+Gemfile.lock
+
+# build artifacts
+*.gem
+.bundle
+/vendor
+
+# docs
+/.yardoc
+/doc
+
+# tmp
+/tmp
+rouge-memory.tmp
+
+# IntelliJ IDEA / RubyMine
+.idea/

@@ -1,0 +1,305 @@
+# Single line comments start with a hash (pound) symbol.
+#= Multiline comments can be written
+   by putting '#=' before the text  and '=#'
+   after the text. They can also be nested.
+=#
+
+# There are several basic types of numbers.
+3 # => 3 (Int64)
+3.2 # => 3.2 (Float64)
+2 + 1im # => 2 + 1im (Complex{Int64})
+2//3 # => 2//3 (Rational{Int64})
+
+# All of the normal infix operators are available.
+1 + 1 # => 2
+8 - 1 # => 7
+10 * 2 # => 20
+35 / 5 # => 7.0
+5 / 2 # => 2.5 # dividing an Int by an Int always results in a Float
+div(5, 2) # => 2 # for a truncated result, use div
+5 \ 35 # => 7.0
+2 ^ 2 # => 4 # power, not bitwise xor
+12 % 10 # => 2
+
+# Enforce precedence with parentheses
+(1 + 3) * 2 # => 8
+
+# Bitwise Operators
+~2 # => -3   # bitwise not
+3 & 5 # => 1 # bitwise and
+2 | 4 # => 6 # bitwise or
+2 $ 4 # => 6 # bitwise xor
+2 >>> 1 # => 1 # logical shift right
+2 >> 1  # => 1 # arithmetic shift right
+2 << 1  # => 4 # logical/arithmetic shift left
+
+# You can use the bits function to see the binary representation of a number.
+bits(12345)
+bits(12345.0)
+
+# Boolean values are primitives
+true
+false
+
+# Boolean operators
+!true # => false
+!false # => true
+1 == 1 # => true
+2 == 1 # => false
+1 != 1 # => false
+2 != 1 # => true
+1 < 10 # => true
+1 > 10 # => false
+2 <= 2 # => true
+2 >= 2 # => true
+1 < 2 < 3 # => true
+2 < 3 < 2 # => false
+
+# Strings are created with "
+"This is a string."
+
+# Character literals are written with '
+'a'
+
+# Some strings can be indexed like an array of characters
+"This is a string"[1] # => 'T' # Julia indexes from 1
+
+# $ can be used for string interpolation:
+"2 + 2 = $(2 + 2)" # => "2 + 2 = 4"
+
+# Another way to format strings is the printf macro.
+@printf "%d is less than %f" 4.5 5.3 # 5 is less than 5.300000
+
+# Printing is easy
+println("I'm Julia. Nice to meet you!")
+
+# You don't declare variables before assigning to them.
+some_var = 5 # => 5
+some_var # => 5
+
+# Accessing a previously unassigned variable is an error
+try
+    some_other_var # => ERROR: some_other_var not defined
+catch e
+    println(e)
+end
+
+# Variable names start with a letter or underscore.
+# After that, you can use letters, digits, underscores, and exclamation points.
+SomeOtherVar123! = 6 # => 6
+
+# You can also use certain unicode characters
+☃ = 8 # => 8
+2 * π # => 6.283185307179586
+
+# Arrays store a sequence of values indexed by integers 1 through n:
+a = Int64[] # => 0-element Int64 Array
+
+# 1-dimensional array literals can be written with comma-separated values.
+b = [4, 5, 6] # => 3-element Int64 Array: [4, 5, 6]
+b[1] # => 4
+b[end] # => 6
+
+# 2-dimentional arrays use space-separated values and semicolon-separated rows.
+matrix = [1 2; 3 4] # => 2x2 Int64 Array: [1 2; 3 4]
+
+# Add stuff to the end of a list with push! and append!
+push!(a,1)     # => [1]
+append!(a,b) # => [1,2,4,3,4,5,6]
+
+# Function names that end in exclamations points indicate that they modify
+# their argument.
+sort(arr) # => [4,5,6]; arr is still [5,4,6]
+sort!(arr) # => [4,5,6]; arr is now [4,5,6]
+
+# You can initialize arrays from ranges
+a = [1:5;] # => 5-element Int64 Array: [1,2,3,4,5]
+
+# You can look at ranges with slice syntax.
+a[1:3] # => [1, 2, 3]
+a[2:end] # => [2, 3, 4, 5]
+
+# Tuples are immutable.
+tup = (1, 2, 3) # => (1,2,3) # an (Int64,Int64,Int64) tuple.
+
+# You can unpack tuples into variables
+a, b, c = (1, 2, 3) # => (1,2,3)  # a is now 1, b is now 2 and c is now 3
+
+# Tuples are created even if you leave out the parentheses
+d, e, f = 4, 5, 6 # => (4,5,6)
+
+# A 1-element tuple is distinct from the value it contains
+(1,) == 1 # => false
+(1) == 1 # => true
+
+# Dictionaries store mappings
+empty_dict = Dict() # => Dict{Any,Any}()
+
+# You can create a dictionary using a literal
+filled_dict = ["one"=> 1, "two"=> 2, "three"=> 3]
+
+# Look up values with []
+filled_dict["one"] # => 1
+
+# Check for existence of keys in a dictionary with in, haskey
+in(("one", 1), filled_dict) # => true
+
+# Initialize a set with values
+filled_set = Set(1,2,2,3,4) # => Set{Int64}(1,2,3,4)
+setdiff(Set(1,2,3,4),Set(2,3,5)) # => Set{Int64}(1,4)
+
+# Here is an if statement. Indentation is not meaningful in Julia.
+if some_var > 10
+    println("some_var is totally bigger than 10.")
+elseif some_var < 10    # This elseif clause is optional.
+    println("some_var is smaller than 10.")
+else                    # The else clause is optional too.
+    println("some_var is indeed 10.")
+end
+
+# For loops iterate over iterables.
+for animal=["dog", "cat", "mouse"]
+    println("$animal is a mammal")
+end
+
+for animal in ["dog", "cat", "mouse"]
+    println("$animal is a mammal")
+end
+
+for a in ["dog"=>"mammal","cat"=>"mammal","mouse"=>"mammal"]
+    println("$(a[1]) is a $(a[2])")
+end
+
+for (k,v) in ["dog"=>"mammal","cat"=>"mammal","mouse"=>"mammal"]
+    println("$k is a $v")
+end
+
+# While loops loop while a condition is true
+while x < 4
+    x += 1  # Shorthand for x = x + 1
+end
+
+# The keyword 'function' creates new functions
+function add(x, y)
+    x + y
+end
+
+# You can define functions that take a variable number of
+# positional arguments
+function varargs(args...)
+    return args
+end
+
+# The ... is called a splat.
+Set([1,2,3]...) # => Set{Int64}(1,2,3) # this is equivalent to Set(1,2,3)
+
+# You can define functions with optional positional arguments
+function defaults(a,b,x=5,y=6)
+    return "$a $b and $x $y"
+end
+
+# You can define functions that take keyword arguments
+function keyword_args(;k1=4,name2="hello") # note the ;
+    return ["k1"=>k1,"name2"=>name2]
+end
+
+keyword_args(name2="ness") # => ["name2"=>"ness","k1"=>4]
+
+# You can combine all kinds of arguments in the same function
+function all_the_args(normal_arg, optional_positional_arg=2; keyword_arg="foo")
+    println("normal arg: $normal_arg")
+end
+
+all_the_args(1, 3, keyword_arg=4)
+
+# Julia has first class functions
+function create_adder(x)
+    adder = function (y)
+        return x + y
+    end
+end
+
+# This is "stabby lambda syntax" for creating anonymous functions
+(x -> x > 2)(3) # => true
+
+# This function is identical to create_adder implementation above.
+function create_adder(x)
+    y -> x + y
+end
+
+# You can also name the internal function, if you want
+function create_adder(x)
+    function adder(y)
+        x + y
+    end
+end
+
+# There are built-in higher order functions
+map(add_10, [1,2,3]) # => [11, 12, 13]
+filter(x -> x > 5, [3, 4, 5, 6, 7]) # => [6, 7]
+
+# We can use list comprehensions for nicer maps
+[add_10(i) for i=[1, 2, 3]] # => [11, 12, 13]
+[add_10(i) for i in [1, 2, 3]] # => [11, 12, 13]
+
+# Julia has a type system.
+typeof(5) # => Int64
+
+# Types are first-class values
+typeof(Int64) # => DataType
+typeof(DataType) # => DataType
+
+# Types are used for documentation, optimizations, and dispatch.
+type Tiger
+  taillength::Float64
+  coatcolor # not including a type annotation is the same as `::Any`
+end
+
+# abstract Name
+abstract Cat # just a name and point in the type hierarchy
+
+super(Int64) # => Signed
+super(super(Signed)) # => Number
+
+# <: is the subtyping operator
+type Lion <: Cat # Lion is a subtype of Cat
+  mane_color
+  roar::AbstractString
+end
+
+# You can define more constructors for your type
+Lion(roar::AbstractString) = Lion("green",roar)
+
+type Panther <: Cat # Panther is also a subtype of Cat
+  eye_color
+  Panther() = new("green")
+end
+
+# Definitions for Lion, Panther, Tiger
+function meow(animal::Lion)
+  animal.roar # access type properties using dot notation
+end
+
+mutable struct Foo
+end
+
+# Code samples adapted from "Learn Julia in Y Minutes".  "Learn Julia in Y
+# Minutes" is copyright Leah Hanson, and the original can be found at
+# http://learnxinyminutes.com/docs/files/learnjulia.jl or
+# https://github.com/adambard/learnxinyminutes-docs/blob/master/julia.html.markdown
+#
+# The use of "Learn Julia in Y Minutes" here in no way denotes endorsement by
+# the author.
+#
+# "Learn Julia in Y Minutes" is licensed under http://creativecommons.org/licenses/by-sa/3.0/legalcode
+
+# Unicode example
+mutable struct Œuvre end
+⇵ = uppercase
+
+function résumer_œuvre(书名::Œuvre="Les Misérables")
+    语言 = "français"
+    for ϕ ∈ 1:1
+        ⇵(语言) # "FRANÇAIS"
+    end
+end
