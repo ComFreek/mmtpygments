@@ -1,0 +1,48 @@
+{
+    // bare keys
+    bareKey: "Hello",
+    $: "Dollar",
+    foo     : "Foo",
+    bar
+
+      : { "bar": true }
+
+    "firstName": "John",
+    "lastName": "Smith",
+    "age": 25,
+    "address": {
+        "streetAddress": "21 2nd Street",
+        "city": "New York",
+        "state": "NY",
+        "postalCode": "10021",
+        "country": "US"
+    },
+    "ellipsis": {
+        "object": { ... },
+        ...
+        "list": [ ... ],
+        "locations": {
+            ...
+            "city": "New York",
+            ...
+            "postalCode": "10021",
+            ...
+        },
+        "key": ...,
+        ...
+    },
+    "comments": { // comments
+        "key": "value", // in
+        "list": [
+            // most
+        ], // locations
+        "key": "value",
+        "emptyObject": { // comment
+        }
+    },
+    ...
+    "errors": {
+        "object": { "a", "b" }
+    },
+    "emptyObject": {} // comment
+}

@@ -1,0 +1,38 @@
+[submodule "test/data/MitM/Foundation"]
+	path = mmtpygments/test/data/MathHub/MitM/Foundation
+	url = https://gl.mathhub.info/MitM/Foundation.git
+	ignore = untracked
+[submodule "test/data/MMT/urtheories"]
+	path = mmtpygments/test/data/MathHub/MMT/urtheories
+	url = https://gl.mathhub.info/MMT/urtheories.git
+	ignore = untracked
+[submodule "test/data/MMT/LFX"]
+	path = mmtpygments/test/data/MathHub/MMT/LFX
+	url = https://gl.mathhub.info/MMT/LFX.git
+	ignore = untracked
+[submodule "test/data/MathHub/Almanac/context-graph"]
+	path = mmtpygments/test/data/MathHub/Almanac/context-graph
+	url = https://gl.mathhub.info/Almanac/context-graph.git
+	ignore = untracked
+[submodule "mmtpygments/test/data/MathHub/MMT/LATIN2"]
+	path = mmtpygments/test/data/MathHub/MMT/LATIN2
+	url = https://gl.mathhub.info/MMT/LATIN2.git
+	ignore = untracked
+	branch = devel
+[submodule "mmtpygments/test/data/MathHub/MMT/examples"]
+	path = mmtpygments/test/data/MathHub/MMT/examples
+	url = https://gl.mathhub.info/MMT/examples.git
+	branch = devel
+	ignore = untracked
+[submodule "mmtpygments/test/data/MathHub/MitM/core"]
+	path = mmtpygments/test/data/MathHub/MitM/core
+	url = https://gl.mathhub.info/MitM/core.git
+	ignore = untracked
+[submodule "exports/codemirror"]
+	path = exports/codemirror
+	url = https://github.com/ComFreek/CodeMirror.git
+	branch = feature.mmt
+[submodule "exports/rouge"]
+	path = exports/rouge
+	url = https://github.com/ComFreek/rouge.git
+	branch = feature.mmt

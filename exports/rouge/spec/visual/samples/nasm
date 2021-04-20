@@ -1,0 +1,60 @@
+; Simple test of the NASM parser
+
+; Data section, initialized variables
+SECTION .data
+
+fmt:  db "a=%d, eax=%d", 10, 0 ; the printf format
+a:    dd  5                    ; int a = 5
+
+%macro IRQ 2
+    global irq%1
+    irq%1:
+        cli
+        push byte 0     ; push a dummy error code
+        push byte %2    ; push the IRQ number
+        jmp  irq_common_stub
+%endmacro
+
+extern  printf    ; the C function to be called
+
+; Code section
+SECTION .text
+
+global main       ; the standard gcc entry point
+
+main:
+  push  ebp
+  mov   ebp, esp
+  mov   eax, [a]
+  add   eax, 2
+  push  'a'
+  push  dword [a] ; value of variable a
+  push  dword fmt ; address of ctrl string
+  call  printf    ; call C function
+  add   esp, 12
+  mov   esp, ebp  ; takedown stack frame
+  pop   ebp
+  mov   eax, 0    ; normal, no error, return value
+  ret             ; return
+
+irq_common_stub:
+  pusha           ; pushes all general-purpose registers
+  mov   ax, ds    ; lower 16-bits of eax = ds
+  mov   ax, 0x10  ; load the kernel data segment descriptor
+  mov   ds, ax
+  popa            ; pops all general-purpose registers
+  add   esp, 8    ; cleans up the pushed error code and pushed irq number
+  sti             ; (re)-enable interrupts "set interrupt flag"
+  iret            ; pops CS, EIP, EFLAGS, SS, and ESP
+
+%assign i 0
+%rep 16
+IRQ i, i+32
+%assign i i+1
+%endrep
+
+mov eax, [eax]
+mov eax, [eax + ebx]
+mov eax, [eax + ebx*2]
+mov eax, [eax + 10]
+mov eax, [eax + ebx*2 + 10]

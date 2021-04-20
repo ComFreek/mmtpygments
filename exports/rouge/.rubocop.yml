@@ -1,0 +1,45 @@
+AllCops:
+  TargetRubyVersion: 2.0
+  DisplayCopNames: true
+  Exclude:
+    - "tasks/**/*"
+    - "vendor/**/*"
+
+Style:
+  Enabled: false
+
+Layout:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Bundler:
+  Enabled: false
+
+Performance/RedundantBlockCall:
+  Enabled: false
+
+Lint/UselessAssignment:
+  Enabled: false
+
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: true
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Lint/UnusedBlockArgument:
+  Enabled: false
+
+Lint/EndAlignment:
+  Enabled: false
+
+Lint/EmptyWhen:
+  Enabled: false
+
+Lint/UnneededSplatExpansion:
+  Enabled: false
+
+Lint/IneffectiveAccessModifier:
+  Enabled: false

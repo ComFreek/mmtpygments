@@ -1,0 +1,53 @@
+branches:
+  only:
+    - master
+    # In tagged commits, the branch name is set to the tag name
+    # And below we deploy upon tagged commits to PyPI
+    - /v\d+.*/
+    - /^greenkeeper/.*$/
+
+os: linux
+dist: xenial
+language: python
+python:
+  - "3.7"
+
+install:
+  - pip install pipenv
+  - pipenv install
+cache: pip
+
+script:
+  - pushd mmtpygments/test ; pipenv run python test.py https://comfreek.github.io/mmtpygments/mmtpygments/test/ ; popd
+
+before_deploy:
+  # Prevent auxiliary and other compilation artifacts from the MMT Git submodule archives to be pushed to gh-pages
+  # We just want the rendered .mmt.html output files
+  - find mmtpygments/test/data -type f ! -name '*.mmt.html' -delete
+
+  # This .gitignore ignores the very .mmt.html output files, hence delete it before deployment to gh-pages
+  - rm -f mmtpygments/test/.gitignore
+
+deploy:
+  - provider: pages
+    strategy: git
+    token: $GITHUB_PAGES_DEPLOYMENT_TOKEN
+    on:
+      branch: master
+    skip_cleanup: true # will soon be deprecated by Travis CI in favor of `cleanup: false` (being the default)
+    target_branch: gh-pages
+  - provider: pypi
+    # Deploy to PyPI from commits on either master branch or version tags
+    # (in the latter case the branch name from Travis CI's POV is the tag name then!)
+    # See https://docs.travis-ci.com/user/deployment/pypi/ and
+    # https://stackoverflow.com/questions/30156581/travis-ci-skipping-deployment-although-commit-is-tagged
+
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(master|v\d+.*)$
+    # keep_history: true, only exists in upcoming dlp2 on Travis CI
+    skip_cleanup: true # will soon be deprecated by Travis CI in favor of `cleanup: false` (being the default)
+    skip_existing: true
+    username: "__token__"
+    password:
+      secure: "DeNZhB8TZ4wQzKk87yWqijz7NW790r+oIX8gOPMyncPTDbtUetlktQKUKXJB3aQVJDkDyLJwIUqZEz0NGDRBcLakWnT1METXBLtPoHf8mXfcs6J40toS7yztnhhNgQqrykntlUWXCqMDgHMUiVdfEtJGb07rpM8iYvw2FCxXHVFapTVswjwOr9jB3D7/HM0hWWemn+BLa11BnUZ8UMjsLomd32khd3zfKMo2b6pB++Dv9A7B9rnBi0PJGhTejfTKlauo3Cd4QXcdzlF0vRp4AjOvOXzXBH6BlLeKl8mblmYGACfCUelK+mgwryTLl2GSwP2QQaBf6J8ZOh2wmk8sb50uZXLcoYQiIcJFVfB2ePPlnCvKPtQihVHw7dLsGg4EOpB0IWJ2plvYZ6rvMiKiNw6EgPQtU11H+wISFsQ9Lk0q75IJERcBMYUDbycfa6PlFyGBxfY7bKeXlfOvpzxl+lqKciAxZkk1p6LotWpuW2fs94eAX+3U752me+z3TP7/QkJrvh7onmhBFHTVaqmaHSBpuVq3nNa7/pkmY3Le56mI9vv1hGEk3mx2QcJxECcubRfcZ11i/6TuDkgRz1/YGqCzLzqu91650gjNmfhGRj3Zt1oJK/w+ZMDwgFHGOCDKPREFNoivA5hLqk5k9wQ8ahEmU2DPvlph+xua3LNXUlc="

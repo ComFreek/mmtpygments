@@ -1,0 +1,75 @@
+##### a gitconfig #####
+[core]
+  editor = gvim -v
+  excludesfile = ~/.gitignore
+  # autocrlf = input
+[user]
+  name = Jeanine Adkisson
+  email = somebody@somewhere.place
+[github]
+  user = jneen
+  token = "asdfasdfasdf"
+[color]
+  branch = auto
+  diff = auto
+  interactive = auto
+  status = auto
+[merge]
+  defaultToUpstream = true
+  conflictStyle = diff3
+[push]
+  default = upstream
+[alias]
+  co = checkout
+
+  rs = reset
+
+  ci = commit -v
+  c  = commit -v
+
+  st = status
+  s  = status
+
+  b = branch
+  br = branch
+  d = diff
+  dc = diff --cached
+
+  a  = add
+  ap = add --patch
+  ae = add --edit
+
+  ps = push
+  fe = fetch
+
+  sh = stash
+
+  # fast-forward
+  ff = merge --ff-only
+  # merge-commit
+  mc = merge --no-ff
+
+  rr = rebase origin
+
+  lg = log --decorate --graph --date=local
+
+  root = rev-parse --show-toplevel
+  head = rev-parse HEAD
+
+;;;;;;  SYSTEM.INI ;;;;;;
+; for 16-bit app support
+[drivers]
+wave=mmdrv.dll
+timer=timer.drv
+[mci]
+[driver32]
+[386enh]
+woafont=dosapp.FON
+EGA80WOA.FON=EGA80WOA.FON
+EGA40WOA.FON=EGA40WOA.FON
+CGA80WOA.FON=CGA80WOA.FON
+CGA40WOA.FON=CGA40WOA.FON
+
+## Other ##
+[section-name]
+foo-bar_ = baz

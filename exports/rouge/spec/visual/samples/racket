@@ -1,0 +1,120 @@
+#lang racket
+
+;; Single-line comment
+
+#| Block comment on one line |#
+
+#|Block comment.
+(define x 3)
+is not highlighted as the commented text.
+|#
+
+#|
+Block comment.
+(define x 3)
+is not highlighted as the commented text.
+|#
+
+#| a |# 1 ; reads equal to 1
+#| #| a |# 1 |# 2 ; reads equal to 2
+
+#;1 2 ; reads equal to 2
+#;(define x 1) (define x 2) ; reads equal to (define x 2)
+#;(define x (f a b)) (define x 2) ; reads equal to (define x 2)
+
+#!/bin/sh ; reads equal to nothing
+#! /bin/sh ; reads equal to nothing
+
+'symbol
+`symbol
+'(a quoted list)
+`(a quasiquoted expr with ,unquasiquoted item)
+#:keyword
+-inf.f
++inf.f
+-inf.0
++inf.0
+-min.0
++max.0
+-nan.0
++nan.0
+
+(define (1-crazy-identifier-疯狂的标识符-τρελό-αναγνωριστικό x)
+  (add1 x))
+
+(check-equal? (1-crazy-identifier-疯狂的标识符-τρελό-αναγνωριστικό 1) 2)
+
+(require xml net/url
+         racket/control) ;; <<< new import
+
+(define (serve port-no)
+  (define main-cust (make-custodian))
+  (parameterize ([current-custodian main-cust])
+    (define listener (tcp-listen port-no 5 #t))
+    (define (loop)
+      (accept-and-handle listener)
+      (loop))
+    (thread loop))
+  (λ ()
+    (custodian-shutdown-all main-cust)))
+
+(define (accept-and-handle listener)
+  (define cust (make-custodian))
+  (custodian-limit-memory cust (* 50 1024 1024))
+  (parameterize ([current-custodian cust])
+    (define-values (in out) (tcp-accept listener))
+    (thread (λ ()
+              (handle in out)
+              (close-input-port in)
+              (close-output-port out))))
+  ;; Watcher thread:
+  (thread (λ ()
+            (sleep 10)
+            (custodian-shutdown-all cust))))
+
+(define (handle in out)
+  (define req
+    ;; Match the first line to extract the request:
+    (regexp-match #rx"^GET (.+) HTTP/[0-9]+\\.[0-9]+"
+                  (read-line in)))
+  (when req
+    ;; Discard the rest of the header (up to blank line):
+    (regexp-match #rx"(\r\n|^)\r\n" in)
+    ;; Dispatch:
+    (let ([xexpr (prompt (dispatch (list-ref req 1)))]) ;; <<< changed
+      ;; Send reply:
+      (display "HTTP/1.0 200 Okay\r\n" out)
+      (display "Server: k\r\nContent-Type: text/html\r\n\r\n" out)
+      (display (xexpr->string xexpr) out))))
+
+(define (dispatch str-path)
+  ;; Parse the request as a URL:
+  (define url (string->url str-path))
+  ;; Extract the path part:
+  (define path (map path/param-path (url-path url)))
+  ;; Find a handler based on the path's first element:
+  (define h (hash-ref dispatch-table (car path) #f))
+  (if h
+      ;; Call a handler:
+      (h (url-query url))
+      ;; No handler found:
+      `(html (head (title "Error"))
+             (body
+              (font ((color "red"))
+                    "Unknown page: "
+                    ,str-path)))))
+
+(define dispatch-table (make-hash))
+
+(hash-set! dispatch-table "hello"
+           (λ (query)
+             `(html (body "Hello, World!"))))
+
+
+;; Highlight booleans
+(define ht #true)
+(define ht #t)
+(define ht #T)
+(define hf #false)
+(define hf #f)
+(define hf #F)
